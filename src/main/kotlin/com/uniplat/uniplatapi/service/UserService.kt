@@ -17,7 +17,7 @@ class UserService(private val userRepository: UserRepository) {
 
     suspend fun create(createUserRequest: CreateUserRequest): User {
         with(createUserRequest) {
-            if(userRepository.existsByEmail(email)) {
+            if (userRepository.existsByEmail(email)) {
                 throw ConflictException("error.user.conflict", args = arrayOf(email))
             }
             val user = User(
