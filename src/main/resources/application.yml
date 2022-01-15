@@ -1,5 +1,4 @@
 server:
-  port: ${SERVER_PORT}
   error:
     include-message: always
 
