@@ -16,7 +16,7 @@ class FlywayConfiguration(private val databaseProperties: DatabaseProperties) {
                     .baselineOnMigrate(true)
                     .outOfOrder(true)
                     .dataSource(
-                        //getDatabaseUrl(host, port, name),
+                        // getDatabaseUrl(host, port, name),
                         getHerokuDatabaseURL(),
                         username,
                         password
