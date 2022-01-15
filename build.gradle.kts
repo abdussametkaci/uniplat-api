@@ -67,7 +67,3 @@ tasks {
         description = "KtLint Format"
     }
 }
-
-tasks.create("stage") {
-    dependsOn("build", "clean")
-}
