@@ -14,12 +14,5 @@ database:
   username: ${DATABASE_USERNAME:postgres}
   password: ${DATABASE_PASSWORD:postgres123}
 
-database-heroku:
-  host: ${DATABASE_HOST:ec2-52-208-221-89.eu-west-1.compute.amazonaws.com}
-  port: ${DATABASE_PORT:5432}
-  name: ${DATABASE_NAME:d6c4h4ktogn7nf}
-  username: ${DATABASE_USERNAME:naeneeqjlpzqvc}
-  password: ${DATABASE_PASSWORD:bf5aceaccdbd12f84c92138f3de9a293935c47693c69b393569a1fb8e3febc91}
-
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}

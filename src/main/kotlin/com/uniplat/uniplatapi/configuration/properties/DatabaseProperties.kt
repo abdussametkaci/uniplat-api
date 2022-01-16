@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties(prefix = "database-heroku")
+@ConfigurationProperties(prefix = "database")
 data class DatabaseProperties(
     val host: String,
     val port: String,
