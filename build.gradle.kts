@@ -30,6 +30,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    // Spring Boot Documentation
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.3")
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.3")
+
     // Data
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.flywaydb:flyway-core")
