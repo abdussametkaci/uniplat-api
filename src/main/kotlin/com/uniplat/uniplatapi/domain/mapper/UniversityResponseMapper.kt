@@ -6,4 +6,4 @@ import com.uniplat.uniplatapi.domain.model.University
 import org.mapstruct.Mapper
 
 @Mapper
-interface UniversityMapper : ContextAwareConverter<University, UniversityResponse>
+interface UniversityResponseMapper : ContextAwareConverter<University, UniversityResponse>

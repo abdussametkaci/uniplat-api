@@ -11,15 +11,9 @@ data class UserResponse(
     val surname: String,
     val gender: Gender,
     val birthDate: Instant,
-    val email: String,
-    val password: String,
     val universityId: UUID,
-    val departmentId: UUID?,
     val type: UserType,
     val description: String?,
     val profileImgId: String?,
-    val messageAccessed: Boolean,
-    val version: Int,
-    val createdAt: Instant,
-    val lastModifiedAt: Instant
+    val messageAccessed: Boolean
 )
