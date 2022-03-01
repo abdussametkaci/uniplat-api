@@ -16,3 +16,9 @@ database:
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+api:
+  file-api:
+    baseUrl: ${FILE_API_BASE_URL:http://localhost:9000}
+    connectionTimeout: PT5S
+    readTimeout: PT30S
