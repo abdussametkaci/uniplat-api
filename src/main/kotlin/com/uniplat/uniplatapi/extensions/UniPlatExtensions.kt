@@ -3,6 +3,7 @@ package com.uniplat.uniplatapi.extensions
 import com.uniplat.uniplatapi.exception.UniplatException
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
+import org.springframework.core.convert.ConversionService
 import org.springframework.data.r2dbc.convert.EnumWriteSupport
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
@@ -32,4 +33,8 @@ inline fun WebClient.Builder.configureTimeouts(
 
 fun WebClient.ResponseSpec.exceptionHandler(): WebClient.ResponseSpec = onStatus(HttpStatus::isError) {
     throw UniplatException("error.api.internal")
+}
+
+inline fun <reified T> ConversionService.convert(source: Any): T {
+    return convert(source, T::class.java)!!
 }

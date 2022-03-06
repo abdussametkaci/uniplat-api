@@ -1,7 +1,7 @@
 package com.uniplat.uniplatapi.controller
 
-import com.uniplat.uniplatapi.component.ContextAwareConversionService
-import com.uniplat.uniplatapi.component.convert
+import org.springframework.core.convert.ConversionService
+import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.service.LoginService
 import org.springframework.web.bind.annotation.PostMapping
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/login")
 class LoginController(
     private val loginService: LoginService,
-    private val conversionService: ContextAwareConversionService
+    private val conversionService: ConversionService
 ) {
 
     @PostMapping

@@ -1,10 +1,10 @@
 package com.uniplat.uniplatapi.controller
 
-import com.uniplat.uniplatapi.component.ContextAwareConversionService
-import com.uniplat.uniplatapi.component.convert
 import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.service.UserService
+import org.springframework.core.convert.ConversionService
+import com.uniplat.uniplatapi.extensions.convert
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,7 +17,7 @@ import java.util.UUID
 @RequestMapping("/users")
 class UserController(
     private val userService: UserService,
-    private val conversionService: ContextAwareConversionService
+    private val conversionService: ConversionService
 ) {
 
     @GetMapping("/{id}")
