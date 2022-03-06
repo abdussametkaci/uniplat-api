@@ -2,9 +2,13 @@ package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
+import com.uniplat.uniplatapi.extensions.convert
+import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserService
 import org.springframework.core.convert.ConversionService
-import com.uniplat.uniplatapi.extensions.convert
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,6 +23,11 @@ class UserController(
     private val userService: UserService,
     private val conversionService: ConversionService
 ) {
+
+    @GetMapping
+    suspend fun getUsers(@PageableDefault pageable: Pageable): PaginatedResponse<UserResponse> {
+        return userService.getUsers(pageable).convertWith(conversionService)
+    }
 
     @GetMapping("/{id}")
     suspend fun getUser(@PathVariable id: UUID): UserResponse {

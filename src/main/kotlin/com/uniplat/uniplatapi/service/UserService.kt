@@ -5,12 +5,26 @@ import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
+import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class UserService(private val userRepository: UserRepository) {
+
+    suspend fun getUsers(pageable: Pageable): PaginatedModel<User> {
+        val count = userRepository.count()
+        val users = userRepository.findAllBy(pageable)
+
+        return PaginatedModel(
+            content = users,
+            number = pageable.pageNumber,
+            size = pageable.pageSize,
+            totalElements = count
+        )
+    }
 
     suspend fun getById(id: UUID): User {
         return userRepository.findById(id) ?: throw NotFoundException("error.user.not-found", args = arrayOf(id))

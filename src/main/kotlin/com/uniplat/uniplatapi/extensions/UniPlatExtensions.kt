@@ -1,8 +1,12 @@
 package com.uniplat.uniplatapi.extensions
 
 import com.uniplat.uniplatapi.exception.UniplatException
+import com.uniplat.uniplatapi.model.PaginatedModel
+import com.uniplat.uniplatapi.model.PaginatedResponse
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.r2dbc.convert.EnumWriteSupport
 import org.springframework.http.HttpStatus
@@ -37,4 +41,14 @@ fun WebClient.ResponseSpec.exceptionHandler(): WebClient.ResponseSpec = onStatus
 
 inline fun <reified T> ConversionService.convert(source: Any): T {
     return convert(source, T::class.java)!!
+}
+
+suspend inline fun <reified T> PaginatedModel<*>.convertWith(conversionService: ConversionService): PaginatedResponse<T> {
+    return PaginatedResponse(
+        this.number,
+        this.size,
+        this.totalElements,
+        this.totalPages,
+        this.content.map { conversionService.convert<T>(it!!) }.toList()
+    )
 }
