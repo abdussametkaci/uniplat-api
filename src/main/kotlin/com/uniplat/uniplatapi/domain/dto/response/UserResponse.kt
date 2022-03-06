@@ -15,5 +15,6 @@ data class UserResponse(
     val type: UserType,
     val description: String?,
     val profileImgId: String?,
-    val messageAccessed: Boolean
+    val messageAccessed: Boolean,
+    val version: Int
 )

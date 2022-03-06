@@ -1,6 +1,7 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
+import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
@@ -20,6 +21,7 @@ class UserService(private val userRepository: UserRepository) {
             if (userRepository.existsByEmail(email)) {
                 throw ConflictException("error.user.conflict", args = arrayOf(email))
             }
+
             val user = User(
                 name = name,
                 surname = surname,
@@ -28,10 +30,9 @@ class UserService(private val userRepository: UserRepository) {
                 email = email,
                 password = password,
                 universityId = universityId,
-                type = type,
+                type = if ("@stu" in email) UserType.STUDENT else UserType.TEACHER
             )
 
-            departmentId?.let { user.departmentId = it }
             description?.let { user.description = it }
             profileImgId?.let { user.profileImgId = it }
 

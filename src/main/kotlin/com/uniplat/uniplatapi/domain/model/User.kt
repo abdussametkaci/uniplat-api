@@ -20,7 +20,6 @@ data class User(
     val email: String,
     var password: String,
     var universityId: UUID,
-    var departmentId: UUID? = null,
     val type: UserType,
     var description: String? = null,
     var profileImgId: String? = null,
