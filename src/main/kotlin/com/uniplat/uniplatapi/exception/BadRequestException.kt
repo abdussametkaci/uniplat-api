@@ -2,8 +2,8 @@ package com.uniplat.uniplatapi.exception
 
 import org.springframework.http.HttpStatus
 
-class ConflictException(
+class BadRequestException(
     messageProperty: String,
     args: List<Any> = emptyList(),
     errors: List<Error> = emptyList()
-) : BaseResponseStatusException(HttpStatus.CONFLICT, "CONFLICT", messageProperty, args, errors)
+) : BaseResponseStatusException(HttpStatus.BAD_REQUEST, "BAD_REQUEST", messageProperty, args, errors)

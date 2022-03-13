@@ -4,6 +4,7 @@ import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserService
 import org.springframework.core.convert.ConversionService
@@ -16,26 +17,30 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
+import javax.validation.Validator
 
 @RestController
 @RequestMapping("/users")
 class UserController(
     private val userService: UserService,
-    private val conversionService: ConversionService
+    private val conversionService: ConversionService,
+    private val validator: Validator
 ) {
 
     @GetMapping
-    suspend fun getUsers(@PageableDefault pageable: Pageable): PaginatedResponse<UserResponse> {
-        return userService.getUsers(pageable).convertWith(conversionService)
+    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserResponse> {
+        return userService.getAll(pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
-    suspend fun getUser(@PathVariable id: UUID): UserResponse {
+    suspend fun getById(@PathVariable id: UUID): UserResponse {
         return conversionService.convert(userService.getById(id))
     }
 
     @PostMapping
-    suspend fun createUser(@RequestBody createUserRequest: CreateUserRequest): UserResponse {
-        return conversionService.convert(userService.create(createUserRequest))
+    suspend fun create(@RequestBody createUserRequest: CreateUserRequest): UserResponse {
+        return validator.withValidateSuspend(createUserRequest) {
+            conversionService.convert(userService.create(createUserRequest))
+        }
     }
 }

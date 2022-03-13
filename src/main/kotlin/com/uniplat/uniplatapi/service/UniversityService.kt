@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service
 class UniversityService(private val universityRepository: UniversityRepository) {
 
     suspend fun getByName(name: String): University {
-        return universityRepository.findByName(name) ?: throw NotFoundException("error.university.not-found", args = arrayOf(name))
+        return universityRepository.findByName(name) ?: throw NotFoundException("error.university.not-found", args = listOf(name))
     }
 }

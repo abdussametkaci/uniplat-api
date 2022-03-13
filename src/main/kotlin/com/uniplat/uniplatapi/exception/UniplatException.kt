@@ -1,10 +1,9 @@
 package com.uniplat.uniplatapi.exception
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
 
-class UniplatException(override val message: String, args: Array<Any>? = null) : ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.getMessage(message, args)) {
-    init {
-        error(reason!!)
-    }
-}
+class UniplatException(
+    messageProperty: String,
+    args: List<Any> = emptyList(),
+    errors: List<Error> = emptyList()
+) : BaseResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", messageProperty, args, errors)

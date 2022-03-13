@@ -10,7 +10,5 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
 
     suspend fun findByEmailAndPassword(email: String, password: String): User?
 
-    suspend fun existsByEmail(email: String): Boolean
-
     fun findAllBy(pageable: Pageable): Flow<User>
 }

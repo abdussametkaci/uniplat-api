@@ -5,6 +5,7 @@ import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
+import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserRepository
 import org.springframework.data.domain.Pageable
@@ -14,7 +15,7 @@ import java.util.UUID
 @Service
 class UserService(private val userRepository: UserRepository) {
 
-    suspend fun getUsers(pageable: Pageable): PaginatedModel<User> {
+    suspend fun getAll(pageable: Pageable): PaginatedModel<User> {
         val count = userRepository.count()
         val users = userRepository.findAllBy(pageable)
 
@@ -27,15 +28,11 @@ class UserService(private val userRepository: UserRepository) {
     }
 
     suspend fun getById(id: UUID): User {
-        return userRepository.findById(id) ?: throw NotFoundException("error.user.not-found", args = arrayOf(id))
+        return userRepository.findById(id) ?: throw NotFoundException("error.user.not-found", args = listOf(id))
     }
 
     suspend fun create(createUserRequest: CreateUserRequest): User {
         with(createUserRequest) {
-            if (userRepository.existsByEmail(email)) {
-                throw ConflictException("error.user.conflict", args = arrayOf(email))
-            }
-
             val user = User(
                 name = name,
                 surname = surname,
@@ -50,7 +47,7 @@ class UserService(private val userRepository: UserRepository) {
             description?.let { user.description = it }
             profileImgId?.let { user.profileImgId = it }
 
-            return userRepository.save(user)
+            return userRepository.saveUnique(user) { throw ConflictException("error.user.conflict", args = listOf(email)) }
         }
     }
 }
