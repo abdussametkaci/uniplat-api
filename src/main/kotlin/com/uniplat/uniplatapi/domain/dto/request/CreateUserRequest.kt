@@ -17,5 +17,6 @@ data class CreateUserRequest(
     val password: String,
     val universityId: UUID,
     val description: String?,
-    val profileImgId: String?
+    val profileImgId: UUID?,
+    val messageAccessed: Boolean = true
 )

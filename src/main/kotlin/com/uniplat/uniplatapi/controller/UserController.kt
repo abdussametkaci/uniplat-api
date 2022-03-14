@@ -1,6 +1,7 @@
 package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
@@ -10,7 +11,9 @@ import com.uniplat.uniplatapi.service.UserService
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -38,9 +41,19 @@ class UserController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody createUserRequest: CreateUserRequest): UserResponse {
-        return validator.withValidateSuspend(createUserRequest) {
-            conversionService.convert(userService.create(createUserRequest))
+    suspend fun create(@RequestBody request: CreateUserRequest): UserResponse {
+        return validator.withValidateSuspend(request) {
+            conversionService.convert(userService.create(request))
         }
+    }
+
+    @PatchMapping("/{id}")
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserRequest): UserResponse {
+        return conversionService.convert(userService.update(id, request))
+    }
+
+    @DeleteMapping("/{id}")
+    suspend fun delete(@PathVariable id: UUID) {
+        userService.delete(id)
     }
 }

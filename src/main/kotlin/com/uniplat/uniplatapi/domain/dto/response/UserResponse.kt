@@ -14,7 +14,7 @@ data class UserResponse(
     val universityId: UUID,
     val type: UserType,
     val description: String?,
-    val profileImgId: String?,
+    val profileImgId: UUID?,
     val messageAccessed: Boolean,
     val version: Int
 )
