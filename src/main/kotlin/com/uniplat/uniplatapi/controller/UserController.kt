@@ -49,7 +49,9 @@ class UserController(
 
     @PatchMapping("/{id}")
     suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserRequest): UserResponse {
-        return conversionService.convert(userService.update(id, request))
+        return validator.withValidateSuspend(request) {
+            conversionService.convert(userService.update(id, request))
+        }
     }
 
     @DeleteMapping("/{id}")
