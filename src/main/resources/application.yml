@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: uniplat-api
+  jackson:
+    deserialization:
+      FAIL_ON_NULL_FOR_PRIMITIVES: true
+      ACCEPT_FLOAT_AS_INT: false
 
 database:
   host: ${DATABASE_HOST:localhost}

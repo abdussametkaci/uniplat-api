@@ -57,8 +57,6 @@ class UserService(private val userRepository: UserRepository) {
         with(request) {
             val user = getById(id)
 
-            if (user.version != version) throw OptimisticLockException()
-
             name?.let { user.name = it }
             surname?.let { user.surname = it }
             gender?.let { user.gender = it }
@@ -68,6 +66,7 @@ class UserService(private val userRepository: UserRepository) {
             description?.let { user.description = it }
             profileImgId?.let { user.profileImgId = it }
             messageAccessed?.let { user.messageAccessed = it }
+            user.version = version
 
             return userRepository.save(user)
         }

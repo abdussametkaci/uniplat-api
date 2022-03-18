@@ -48,6 +48,14 @@ class UniPlatErrorWebExceptionHandler(
                     emptyList()
                 )
             }
+            ex.javaClass.name == OPTIMISTIC_LOCKING_FAILURE_EXCEPTION -> {
+                status = HttpStatus.CONFLICT
+                errorResponse = ErrorResponse(
+                    "OPTIMISTIC_LOCK",
+                    getLocalizedMessage(com.uniplat.uniplatapi.exception.Error(code = "OPTIMISTIC_LOCK", messageProperty = "error.*.optimistic-lock")),
+                    emptyList()
+                )
+            }
             else -> {
                 status = HttpStatus.INTERNAL_SERVER_ERROR
                 errorResponse = ErrorResponse(
@@ -81,5 +89,9 @@ class UniPlatErrorWebExceptionHandler(
             return messageSource.getMessage(error.messageProperty, error.messageArgs.map { it.toString() }.toTypedArray(), LocaleContextHolder.getLocale())
         }
         return error.message ?: ""
+    }
+
+    private companion object {
+        const val OPTIMISTIC_LOCKING_FAILURE_EXCEPTION = "org.springframework.dao.OptimisticLockingFailureException"
     }
 }
