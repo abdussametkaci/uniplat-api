@@ -1,4 +1,4 @@
-package com.uniplat.uniplatapi.domain.dto.request
+package com.uniplat.uniplatapi.domain.dto.request.update
 
 import com.uniplat.uniplatapi.domain.enums.Gender
 import java.time.Instant

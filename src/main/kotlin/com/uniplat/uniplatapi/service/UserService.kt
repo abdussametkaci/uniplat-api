@@ -1,7 +1,7 @@
 package com.uniplat.uniplatapi.service
 
-import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
-import com.uniplat.uniplatapi.domain.dto.request.UpdateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.exception.ConflictException

@@ -1,7 +1,7 @@
 package com.uniplat.uniplatapi.controller
 
-import com.uniplat.uniplatapi.domain.dto.request.CreateUserRequest
-import com.uniplat.uniplatapi.domain.dto.request.UpdateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
