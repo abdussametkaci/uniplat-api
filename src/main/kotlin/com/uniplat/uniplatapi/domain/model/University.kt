@@ -11,7 +11,7 @@ import java.util.UUID
 @Table
 data class University(
     @Id val id: UUID? = null,
-    val name: String,
+    var name: String,
     var adminId: UUID,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
