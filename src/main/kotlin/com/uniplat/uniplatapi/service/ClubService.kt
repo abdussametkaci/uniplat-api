@@ -17,10 +17,10 @@ class ClubService(private val clubRepository: ClubRepository) {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<Club> {
         val count = clubRepository.count()
-        val users = clubRepository.findAllBy(pageable)
+        val clubs = clubRepository.findAllBy(pageable)
 
         return PaginatedModel(
-            content = users,
+            content = clubs,
             number = pageable.pageNumber,
             size = pageable.pageSize,
             totalElements = count
@@ -33,25 +33,25 @@ class ClubService(private val clubRepository: ClubRepository) {
 
     suspend fun create(request: CreateClubRequest): Club {
         with(request) {
-            val user = Club(
+            val club = Club(
                 name = name,
                 universityId = universityId,
                 adminId = adminId
             )
 
-            return clubRepository.saveUnique(user) { throw ConflictException("error.club.conflict", args = listOf(name)) }
+            return clubRepository.saveUnique(club) { throw ConflictException("error.club.conflict", args = listOf(name)) }
         }
     }
 
     suspend fun update(id: UUID, request: UpdateClubRequest): Club {
         with(request) {
-            val user = getById(id)
+            val club = getById(id)
 
-            name?.let { user.name = it }
-            adminId?.let { user.adminId = it }
-            user.version = version
+            name?.let { club.name = it }
+            adminId?.let { club.adminId = it }
+            club.version = version
 
-            return clubRepository.save(user)
+            return clubRepository.save(club)
         }
     }
 
