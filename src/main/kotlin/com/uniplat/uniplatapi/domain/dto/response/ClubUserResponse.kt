@@ -6,5 +6,5 @@ data class ClubUserResponse(
     val id: UUID,
     val clubId: UUID,
     val userId: UUID,
-    val version: Int,
+    val version: Int
 )

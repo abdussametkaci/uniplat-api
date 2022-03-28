@@ -4,5 +4,5 @@ import java.util.UUID
 
 data class CreateUniversityUserRequest(
     val universityId: UUID,
-    val userId: UUID,
+    val userId: UUID
 )

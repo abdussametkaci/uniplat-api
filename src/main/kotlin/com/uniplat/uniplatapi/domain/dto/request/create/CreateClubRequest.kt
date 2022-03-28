@@ -8,5 +8,5 @@ data class CreateClubRequest(
     val name: String,
 
     val universityId: UUID,
-    val adminId: UUID,
+    val adminId: UUID
 )

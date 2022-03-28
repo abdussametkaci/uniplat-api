@@ -7,5 +7,5 @@ data class ClubResponse(
     val name: String,
     val universityId: UUID,
     val adminId: UUID,
-    val version: Int,
+    val version: Int
 )
