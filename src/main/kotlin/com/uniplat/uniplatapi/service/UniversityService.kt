@@ -42,6 +42,8 @@ class UniversityService(
 
             val university = University(
                 name = name,
+                description = description,
+                profileImgId = profileImgId,
                 adminId = adminId
             )
 
@@ -55,6 +57,8 @@ class UniversityService(
 
             val university = getById(id)
             name?.let { university.name = it }
+            description?.let { university.description = it }
+            profileImgId?.let { university.profileImgId = it }
             adminId?.let { university.adminId = it }
             university.version = version
 

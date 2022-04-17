@@ -36,6 +36,8 @@ class ClubService(private val clubRepository: ClubRepository) {
             val club = Club(
                 name = name,
                 universityId = universityId,
+                description = description,
+                profileImgId = profileImgId,
                 adminId = adminId
             )
 
@@ -48,6 +50,8 @@ class ClubService(private val clubRepository: ClubRepository) {
             val club = getById(id)
 
             name?.let { club.name = it }
+            description?.let { club.description = it }
+            profileImgId?.let { club.profileImgId = it }
             adminId?.let { club.adminId = it }
             club.version = version
 
