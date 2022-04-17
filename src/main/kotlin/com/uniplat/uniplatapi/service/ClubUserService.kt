@@ -17,7 +17,7 @@ class ClubUserService(private val clubUserRepository: ClubUserRepository) {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<ClubUser> {
         val count = clubUserRepository.count()
-        val clubUsers = clubUserRepository.findAllBy(pageable)
+        val clubUsers = clubUserRepository.findAll(pageable)
 
         return PaginatedModel(
             content = clubUsers,

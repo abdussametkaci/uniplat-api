@@ -18,7 +18,7 @@ class UserService(private val userRepository: UserRepository) {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<User> {
         val count = userRepository.count()
-        val users = userRepository.findAllBy(pageable)
+        val users = userRepository.findAll(pageable)
 
         return PaginatedModel(
             content = users,
