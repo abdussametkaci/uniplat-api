@@ -9,5 +9,6 @@ import java.time.Duration
 data class FileClientProperties(
     val baseUrl: String,
     val connectionTimeout: Duration,
-    val readTimeout: Duration
+    val readTimeout: Duration,
+    val memorySizeByMB: Int
 )
