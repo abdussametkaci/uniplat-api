@@ -11,6 +11,7 @@ data class UserResponse(
     val surname: String,
     val gender: Gender,
     val birthDate: Instant,
+    val email: String,
     val universityId: UUID,
     val type: UserType,
     val description: String?,
