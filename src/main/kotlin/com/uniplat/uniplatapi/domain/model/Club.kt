@@ -13,6 +13,8 @@ data class Club(
     @Id val id: UUID? = null,
     var name: String,
     val universityId: UUID,
+    var description: String? = null,
+    var profileImgId: UUID? = null,
     var adminId: UUID,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
