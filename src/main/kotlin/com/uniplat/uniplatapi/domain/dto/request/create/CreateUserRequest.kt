@@ -23,7 +23,7 @@ data class CreateUserRequest(
     @get:Size(min = 4, max = 255, message = "error.user.password-invalid")
     val password: String,
 
-    val universityId: UUID,
+    val universityId: UUID?,
 
     @get:Size(min = 1, max = 255, message = "error.user.description-invalid")
     val description: String?,

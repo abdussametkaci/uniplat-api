@@ -19,7 +19,7 @@ data class User(
     var birthDate: Instant,
     val email: String,
     var password: String,
-    var universityId: UUID,
+    var universityId: UUID? = null,
     val type: UserType,
     var description: String? = null,
     var profileImgId: UUID? = null,

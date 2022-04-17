@@ -12,7 +12,7 @@ data class UserResponse(
     val gender: Gender,
     val birthDate: Instant,
     val email: String,
-    val universityId: UUID,
+    val universityId: UUID?,
     val type: UserType,
     val description: String?,
     val profileImgId: UUID?,

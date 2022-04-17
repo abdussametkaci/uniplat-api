@@ -17,7 +17,7 @@ CREATE TABLE "user"
     birth_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     email            VARCHAR(255)                NOT NULL,
     password         VARCHAR(255)                NOT NULL,
-    university_id    UUID                        NOT NULL,
+    university_id    UUID,
     type             USER_TYPE                   NOT NULL,
     description      VARCHAR(255),
     profile_img_id   UUID,
