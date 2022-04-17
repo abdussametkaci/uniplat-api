@@ -12,6 +12,8 @@ import java.util.UUID
 data class University(
     @Id val id: UUID? = null,
     var name: String,
+    var description: String? = null,
+    var profileImgId: UUID? = null,
     var adminId: UUID,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
