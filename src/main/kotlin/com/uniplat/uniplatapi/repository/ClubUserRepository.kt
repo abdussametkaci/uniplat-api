@@ -8,5 +8,5 @@ import java.util.UUID
 
 interface ClubUserRepository : CoroutineCrudRepository<ClubUser, UUID> {
 
-    fun findAll(pageable: Pageable): Flow<ClubUser>
+    fun findAllBy(pageable: Pageable): Flow<ClubUser>
 }

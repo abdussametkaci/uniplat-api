@@ -17,7 +17,7 @@ class UniversityUserService(private val universityUserRepository: UniversityUser
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<UniversityUser> {
         val count = universityUserRepository.count()
-        val universityUsers = universityUserRepository.findAll(pageable)
+        val universityUsers = universityUserRepository.findAllBy(pageable)
 
         return PaginatedModel(
             content = universityUsers,
