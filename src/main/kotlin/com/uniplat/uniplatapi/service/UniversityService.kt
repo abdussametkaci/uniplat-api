@@ -22,7 +22,7 @@ class UniversityService(
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<University> {
         val count = universityRepository.count()
-        val universities = universityRepository.findAllBy(pageable)
+        val universities = universityRepository.findAll(pageable)
 
         return PaginatedModel(
             content = universities,
