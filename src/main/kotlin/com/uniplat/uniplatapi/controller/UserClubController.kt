@@ -32,7 +32,7 @@ class UserClubController(
         @RequestParam clubId: UUID?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<UserClubResponse> {
-        return userClubService.getAll(pageable).convertWith(conversionService)
+        return userClubService.getAll(userId, clubId, pageable).convertWith(conversionService)
     }
 
     @PostMapping
