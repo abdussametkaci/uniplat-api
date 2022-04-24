@@ -16,7 +16,7 @@ class PostService(private val postRepository: PostRepository) {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<Post> {
         val count = postRepository.count()
-        val posts = postRepository.findAll(pageable)
+        val posts = postRepository.findAllBy(pageable)
 
         return PaginatedModel(
             content = posts,

@@ -3,7 +3,6 @@ package com.uniplat.uniplatapi.service
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityUserRequest
 import com.uniplat.uniplatapi.domain.model.UserUniversity
 import com.uniplat.uniplatapi.exception.ConflictException
-import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserUniversityRepository
@@ -16,7 +15,7 @@ class UserUniversityService(private val userUniversityRepository: UserUniversity
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<UserUniversity> {
         val count = userUniversityRepository.count()
-        val universityUsers = userUniversityRepository.findAll(pageable)
+        val universityUsers = userUniversityRepository.findAllBy(pageable)
 
         return PaginatedModel(
             content = universityUsers,

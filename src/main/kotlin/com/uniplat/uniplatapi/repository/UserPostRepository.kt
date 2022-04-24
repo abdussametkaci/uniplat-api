@@ -8,5 +8,5 @@ import java.util.UUID
 
 interface UserPostRepository : CoroutineCrudRepository<UserPost, UUID> {
 
-    fun findAll(pageable: Pageable): Flow<UserPost>
+    fun findAllBy(pageable: Pageable): Flow<UserPost>
 }
