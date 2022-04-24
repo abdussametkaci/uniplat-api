@@ -13,9 +13,9 @@ import java.util.UUID
 @Service
 class UserUniversityService(private val userUniversityRepository: UserUniversityRepository) {
 
-    suspend fun getAll(pageable: Pageable): PaginatedModel<UserUniversity> {
-        val count = userUniversityRepository.count()
-        val universityUsers = userUniversityRepository.findAllBy(pageable)
+    suspend fun getAll(userId: UUID?, universityId: UUID?, pageable: Pageable): PaginatedModel<UserUniversity> {
+        val count = userUniversityRepository.count(userId, universityId)
+        val universityUsers = userUniversityRepository.findAllBy(userId, universityId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = universityUsers,
