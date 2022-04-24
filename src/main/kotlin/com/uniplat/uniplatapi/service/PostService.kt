@@ -58,6 +58,12 @@ class PostService(private val postRepository: PostRepository) {
         postRepository.deleteById(id)
     }
 
+    suspend fun like(id: UUID) {
+        val post = getById(id)
+        post.likeCounter++
+        postRepository.save(post)
+    }
+
     private suspend fun validate(request: CreatePostRequest) {
         with(request) {
             if (imgId == null && description == null) throw BadRequestException("error.post.invalid")
