@@ -34,11 +34,11 @@ class UserClubService(private val userClubRepository: UserClubRepository) {
     suspend fun create(request: CreateUserClubRequest): UserClub {
         with(request) {
             val userClub = UserClub(
-                clubId = clubId,
-                userId = clubId
+                userId = clubId,
+                clubId = clubId
             )
 
-            return userClubRepository.saveUnique(userClub) { throw ConflictException("error.user-club.conflict", args = listOf(clubId, userId)) }
+            return userClubRepository.saveUnique(userClub) { throw ConflictException("error.user-club.conflict", args = listOf(userId, clubId)) }
         }
     }
 
