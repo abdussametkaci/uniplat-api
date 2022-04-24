@@ -1,7 +1,6 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityClubRequest
-import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityClubRequest
 import com.uniplat.uniplatapi.domain.model.UniversityClub
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
@@ -44,18 +43,6 @@ class UniversityClubService(private val universityClubRepository: UniversityClub
                     args = listOf(universityId, clubId)
                 )
             }
-        }
-    }
-
-    suspend fun update(id: UUID, request: UpdateUniversityClubRequest): UniversityClub {
-        with(request) {
-            val universityClub = getById(id)
-
-            universityId?.let { universityClub.universityId = it }
-            clubId?.let { universityClub.clubId = it }
-            universityClub.version = version
-
-            return universityClubRepository.save(universityClub)
         }
     }
 
