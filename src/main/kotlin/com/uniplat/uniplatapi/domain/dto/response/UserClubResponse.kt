@@ -4,7 +4,7 @@ import java.util.UUID
 
 data class UserClubResponse(
     val id: UUID,
-    val clubId: UUID,
     val userId: UUID,
+    val clubId: UUID,
     val version: Int
 )

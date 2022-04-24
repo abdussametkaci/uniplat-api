@@ -3,6 +3,6 @@ package com.uniplat.uniplatapi.domain.dto.request.create
 import java.util.UUID
 
 data class CreateUserClubRequest(
-    val clubId: UUID,
-    val userId: UUID
+    val userId: UUID,
+    val clubId: UUID
 )
