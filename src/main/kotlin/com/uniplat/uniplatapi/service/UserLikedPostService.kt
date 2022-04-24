@@ -18,9 +18,9 @@ class UserLikedPostService(
     private val postService: PostService
 ) {
 
-    suspend fun getAll(pageable: Pageable): PaginatedModel<UserLikedPost> {
-        val count = userLikedPostRepository.count()
-        val userLikedPosts = userLikedPostRepository.findAllBy(pageable)
+    suspend fun getAll(userId: UUID?, postId: UUID?, pageable: Pageable): PaginatedModel<UserLikedPost> {
+        val count = userLikedPostRepository.count(userId, postId)
+        val userLikedPosts = userLikedPostRepository.findAllBy(userId, postId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = userLikedPosts,
