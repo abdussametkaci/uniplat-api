@@ -1,12 +1,12 @@
 package com.uniplat.uniplatapi.controller
 
-import com.uniplat.uniplatapi.domain.dto.request.create.CreateClubUserRequest
-import com.uniplat.uniplatapi.domain.dto.request.update.UpdateClubUserRequest
-import com.uniplat.uniplatapi.domain.dto.response.ClubUserResponse
+import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserClubRequest
+import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserClubRequest
+import com.uniplat.uniplatapi.domain.dto.response.UserClubResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.model.PaginatedResponse
-import com.uniplat.uniplatapi.service.ClubUserService
+import com.uniplat.uniplatapi.service.UserClubService
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -21,34 +21,34 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/club-users")
-class ClubUserController(
-    private val clubUserService: ClubUserService,
+@RequestMapping("/user-clubs")
+class UserClubController(
+    private val userClubService: UserClubService,
     private val conversionService: ConversionService
 ) {
 
     @GetMapping
-    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<ClubUserResponse> {
-        return clubUserService.getAll(pageable).convertWith(conversionService)
+    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserClubResponse> {
+        return userClubService.getAll(pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): ClubUserResponse {
-        return conversionService.convert(clubUserService.getById(id))
+    suspend fun getById(@PathVariable id: UUID): UserClubResponse {
+        return conversionService.convert(userClubService.getById(id))
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateClubUserRequest): ClubUserResponse {
-        return conversionService.convert(clubUserService.create(request))
+    suspend fun create(@RequestBody request: CreateUserClubRequest): UserClubResponse {
+        return conversionService.convert(userClubService.create(request))
     }
 
     @PatchMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateClubUserRequest): ClubUserResponse {
-        return conversionService.convert(clubUserService.update(id, request))
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserClubRequest): UserClubResponse {
+        return conversionService.convert(userClubService.update(id, request))
     }
 
     @DeleteMapping("/{id}")
     suspend fun delete(@PathVariable id: UUID) {
-        clubUserService.delete(id)
+        userClubService.delete(id)
     }
 }

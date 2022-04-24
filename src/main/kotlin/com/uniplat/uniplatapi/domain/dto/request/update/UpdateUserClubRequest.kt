@@ -2,7 +2,7 @@ package com.uniplat.uniplatapi.domain.dto.request.update
 
 import java.util.UUID
 
-data class UpdateClubUserRequest(
+data class UpdateUserClubRequest(
     val clubId: UUID?,
     val userId: UUID?,
     val version: Int
