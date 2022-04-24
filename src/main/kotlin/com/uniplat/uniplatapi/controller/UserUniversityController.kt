@@ -1,8 +1,7 @@
 package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityUserRequest
-import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityUserRequest
-import com.uniplat.uniplatapi.domain.dto.response.UniversityUserResponse
+import com.uniplat.uniplatapi.domain.dto.response.UserUniversityResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.model.PaginatedResponse
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,23 +26,13 @@ class UserUniversityController(
 ) {
 
     @GetMapping
-    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UniversityUserResponse> {
+    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserUniversityResponse> {
         return userUniversityService.getAll(pageable).convertWith(conversionService)
     }
 
-    @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): UniversityUserResponse {
-        return conversionService.convert(userUniversityService.getById(id))
-    }
-
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUniversityUserRequest): UniversityUserResponse {
+    suspend fun create(@RequestBody request: CreateUniversityUserRequest): UserUniversityResponse {
         return conversionService.convert(userUniversityService.create(request))
-    }
-
-    @PatchMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUniversityUserRequest): UniversityUserResponse {
-        return conversionService.convert(userUniversityService.update(id, request))
     }
 
     @DeleteMapping("/{id}")
