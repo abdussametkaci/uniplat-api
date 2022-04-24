@@ -1,7 +1,6 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityUserRequest
-import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityUserRequest
 import com.uniplat.uniplatapi.domain.model.UserUniversity
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
@@ -27,10 +26,6 @@ class UserUniversityService(private val userUniversityRepository: UserUniversity
         )
     }
 
-    suspend fun getById(id: UUID): UserUniversity {
-        return userUniversityRepository.findById(id) ?: throw NotFoundException("error.user-university.not-found", args = listOf(id))
-    }
-
     suspend fun create(request: CreateUniversityUserRequest): UserUniversity {
         with(request) {
             val userUniversity = UserUniversity(
@@ -44,17 +39,6 @@ class UserUniversityService(private val userUniversityRepository: UserUniversity
                     args = listOf(userId, universityId)
                 )
             }
-        }
-    }
-
-    suspend fun update(id: UUID, request: UpdateUniversityUserRequest): UserUniversity {
-        with(request) {
-            val universityUser = getById(id)
-            universityId?.let { universityUser.universityId = it }
-            userId?.let { universityUser.userId = it }
-            universityUser.version = version
-
-            return userUniversityRepository.save(universityUser)
         }
     }
 

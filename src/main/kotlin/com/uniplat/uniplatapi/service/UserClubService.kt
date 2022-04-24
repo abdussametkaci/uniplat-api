@@ -1,10 +1,8 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserClubRequest
-import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserClubRequest
 import com.uniplat.uniplatapi.domain.model.UserClub
 import com.uniplat.uniplatapi.exception.ConflictException
-import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserClubRepository
@@ -27,10 +25,6 @@ class UserClubService(private val userClubRepository: UserClubRepository) {
         )
     }
 
-    suspend fun getById(id: UUID): UserClub {
-        return userClubRepository.findById(id) ?: throw NotFoundException("error.user-club.not-found", args = listOf(id))
-    }
-
     suspend fun create(request: CreateUserClubRequest): UserClub {
         with(request) {
             val userClub = UserClub(
@@ -39,18 +33,6 @@ class UserClubService(private val userClubRepository: UserClubRepository) {
             )
 
             return userClubRepository.saveUnique(userClub) { throw ConflictException("error.user-club.conflict", args = listOf(userId, clubId)) }
-        }
-    }
-
-    suspend fun update(id: UUID, request: UpdateUserClubRequest): UserClub {
-        with(request) {
-            val clubUser = getById(id)
-
-            clubId?.let { clubUser.clubId = it }
-            userId?.let { clubUser.userId = it }
-            clubUser.version = version
-
-            return userClubRepository.save(clubUser)
         }
     }
 

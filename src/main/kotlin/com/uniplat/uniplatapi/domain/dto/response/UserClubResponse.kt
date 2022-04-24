@@ -5,6 +5,5 @@ import java.util.UUID
 data class UserClubResponse(
     val id: UUID,
     val userId: UUID,
-    val clubId: UUID,
-    val version: Int
+    val clubId: UUID
 )
