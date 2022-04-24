@@ -2,7 +2,7 @@ package com.uniplat.uniplatapi.domain.dto.response
 
 import java.util.UUID
 
-data class UserClubResponse(
+data class ClubUserResponse(
     val id: UUID,
     val clubId: UUID,
     val userId: UUID,

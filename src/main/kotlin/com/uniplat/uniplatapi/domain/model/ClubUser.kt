@@ -9,10 +9,10 @@ import java.time.Instant
 import java.util.UUID
 
 @Table
-data class UserClub(
+data class ClubUser(
     @Id val id: UUID? = null,
-    var userId: UUID,
     var clubId: UUID,
+    var userId: UUID,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
     @LastModifiedDate var lastModifiedAt: Instant? = null
