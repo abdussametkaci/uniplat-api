@@ -3,6 +3,7 @@ package com.uniplat.uniplatapi.controller
 import com.uniplat.uniplatapi.domain.dto.request.create.CreatePostRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdatePostRequest
 import com.uniplat.uniplatapi.domain.dto.response.PostResponse
+import com.uniplat.uniplatapi.domain.enums.PostOwnerType
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 import javax.validation.Validator
@@ -31,8 +33,12 @@ class PostController(
 ) {
 
     @GetMapping
-    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<PostResponse> {
-        return postService.getAll(pageable).convertWith(conversionService)
+    suspend fun getAll(
+        @RequestParam ownerId: UUID?,
+        @RequestParam postOwnerType: PostOwnerType?,
+        @PageableDefault pageable: Pageable
+    ): PaginatedResponse<PostResponse> {
+        return postService.getAll(ownerId, postOwnerType, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")

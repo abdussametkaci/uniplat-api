@@ -2,6 +2,8 @@ package com.uniplat.uniplatapi.configuration
 
 import com.uniplat.uniplatapi.configuration.properties.DatabaseProperties
 import com.uniplat.uniplatapi.domain.enums.Gender
+import com.uniplat.uniplatapi.domain.enums.PostOwnerType
+import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.extensions.enumConverterOf
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
@@ -40,13 +42,17 @@ class DatabaseConfiguration(private val databaseProperties: DatabaseProperties) 
         return EnumCodec.builder()
             .withEnum("gender", Gender::class.java)
             .withEnum("user_type", UserType::class.java)
+            .withEnum("post_owner_type", PostOwnerType::class.java)
+            .withEnum("post_type", PostType::class.java)
             .build()
     }
 
     override fun getCustomConverters(): List<EnumWriteSupport<out Enum<*>>> {
         return listOf(
             enumConverterOf<Gender>(),
-            enumConverterOf<UserType>()
+            enumConverterOf<UserType>(),
+            enumConverterOf<PostOwnerType>(),
+            enumConverterOf<PostType>()
         )
     }
 }
