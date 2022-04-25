@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.controller
 
-import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserUniversityRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserUniversityResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
@@ -36,7 +36,7 @@ class UserUniversityController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUniversityUserRequest): UserUniversityResponse {
+    suspend fun create(@RequestBody request: CreateUserUniversityRequest): UserUniversityResponse {
         return conversionService.convert(userUniversityService.create(request))
     }
 

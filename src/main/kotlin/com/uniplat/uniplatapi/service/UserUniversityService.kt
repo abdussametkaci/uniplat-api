@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.service
 
-import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserUniversityRequest
 import com.uniplat.uniplatapi.domain.model.UserUniversity
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.extensions.saveUnique
@@ -25,7 +25,7 @@ class UserUniversityService(private val userUniversityRepository: UserUniversity
         )
     }
 
-    suspend fun create(request: CreateUniversityUserRequest): UserUniversity {
+    suspend fun create(request: CreateUserUniversityRequest): UserUniversity {
         with(request) {
             val userUniversity = UserUniversity(
                 userId = userId,
