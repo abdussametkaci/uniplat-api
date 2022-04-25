@@ -16,7 +16,7 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         """
         SELECT count(*)
         FROM post
-        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND ((:postOwnerType IS NULL OR post_owner_type = :postOwnerType))
+        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:postOwnerType IS NULL OR post_owner_type = :postOwnerType)
         """
     )
     suspend fun count(ownerId: UUID?, postOwnerType: PostOwnerType?): Long
@@ -25,7 +25,7 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         """
         SELECT *
         FROM post
-        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND ((:postOwnerType IS NULL OR post_owner_type = :postOwnerType))
+        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:postOwnerType IS NULL OR post_owner_type = :postOwnerType)
         OFFSET :offset LIMIT :limit
         """
     )

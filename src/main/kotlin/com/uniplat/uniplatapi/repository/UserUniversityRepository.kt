@@ -15,7 +15,7 @@ interface UserUniversityRepository : CoroutineCrudRepository<UserUniversity, UUI
         """
         SELECT count(*)
         FROM user_university
-        WHERE (:userId IS NULL OR user_id = :userId) AND ((:universityId IS NULL OR university_id = :universityId))
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:universityId IS NULL OR university_id = :universityId)
         """
     )
     suspend fun count(userId: UUID?, universityId: UUID?): Long
@@ -24,7 +24,7 @@ interface UserUniversityRepository : CoroutineCrudRepository<UserUniversity, UUI
         """
         SELECT *
         FROM user_university
-        WHERE (:userId IS NULL OR user_id = :userId) AND ((:universityId IS NULL OR university_id = :universityId))
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:universityId IS NULL OR university_id = :universityId)
         OFFSET :offset LIMIT :limit
         """
     )

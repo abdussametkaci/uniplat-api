@@ -15,7 +15,7 @@ interface UserClubRepository : CoroutineCrudRepository<UserClub, UUID> {
         """
         SELECT count(*)
         FROM user_club
-        WHERE (:userId IS NULL OR user_id = :userId) AND ((:clubId IS NULL OR club_id = :clubId))
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:clubId IS NULL OR club_id = :clubId)
         """
     )
     suspend fun count(userId: UUID?, clubId: UUID?): Long
@@ -24,7 +24,7 @@ interface UserClubRepository : CoroutineCrudRepository<UserClub, UUID> {
         """
         SELECT *
         FROM user_club
-        WHERE (:userId IS NULL OR user_id = :userId) AND ((:clubId IS NULL OR club_id = :clubId))
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:clubId IS NULL OR club_id = :clubId)
         OFFSET :offset LIMIT :limit
         """
     )

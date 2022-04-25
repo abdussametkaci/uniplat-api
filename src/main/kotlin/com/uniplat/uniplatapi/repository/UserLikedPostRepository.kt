@@ -15,7 +15,7 @@ interface UserLikedPostRepository : CoroutineCrudRepository<UserLikedPost, UUID>
         """
         SELECT count(*)
         FROM user_liked_post
-        WHERE (:userId IS NULL OR user_id = :userId) AND ((:postId IS NULL OR post_id = :postId))
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:postId IS NULL OR post_id = :postId)
         """
     )
     suspend fun count(userId: UUID?, postId: UUID?): Long
@@ -24,7 +24,7 @@ interface UserLikedPostRepository : CoroutineCrudRepository<UserLikedPost, UUID>
         """
         SELECT *
         FROM user_liked_post
-        WHERE (:userId IS NULL OR user_id = :userId) AND ((:postId IS NULL OR post_id = :postId))
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:postId IS NULL OR post_id = :postId)
         OFFSET :offset LIMIT :limit
         """
     )
