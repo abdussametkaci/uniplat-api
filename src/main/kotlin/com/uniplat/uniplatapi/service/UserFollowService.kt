@@ -29,10 +29,10 @@ class UserFollowService(private val userFollowRepository: UserFollowRepository) 
         with(request) {
             val userClub = UserFollow(
                 userId = userId,
-                followerId = contactId
+                followerId = followerId
             )
 
-            return userFollowRepository.saveUnique(userClub) { throw ConflictException("error.user-contact.conflict", args = listOf(userId, contactId)) }
+            return userFollowRepository.saveUnique(userClub) { throw ConflictException("error.user-contact.conflict", args = listOf(userId, followerId)) }
         }
     }
 
