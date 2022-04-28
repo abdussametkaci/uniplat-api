@@ -4,5 +4,5 @@ import java.util.UUID
 
 data class CreateUserFollowRequest(
     val userId: UUID,
-    val contactId: UUID
+    val followerId: UUID
 )
