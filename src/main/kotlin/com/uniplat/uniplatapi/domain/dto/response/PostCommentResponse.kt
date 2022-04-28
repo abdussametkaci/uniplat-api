@@ -4,6 +4,7 @@ import java.time.Instant
 import java.util.UUID
 
 data class PostCommentResponse(
+    val id: UUID,
     val userId: UUID,
     val postId: UUID,
     val comment: String,
