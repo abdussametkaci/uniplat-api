@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.domain.enums
 
-enum class PostOwnerType {
+enum class OwnerType {
     USER,
     UNIVERSITY,
     CLUB

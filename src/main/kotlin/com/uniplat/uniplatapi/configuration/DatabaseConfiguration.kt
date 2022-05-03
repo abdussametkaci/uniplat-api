@@ -2,7 +2,7 @@ package com.uniplat.uniplatapi.configuration
 
 import com.uniplat.uniplatapi.configuration.properties.DatabaseProperties
 import com.uniplat.uniplatapi.domain.enums.Gender
-import com.uniplat.uniplatapi.domain.enums.PostOwnerType
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.extensions.enumConverterOf
@@ -42,7 +42,7 @@ class DatabaseConfiguration(private val databaseProperties: DatabaseProperties) 
         return EnumCodec.builder()
             .withEnum("gender", Gender::class.java)
             .withEnum("user_type", UserType::class.java)
-            .withEnum("post_owner_type", PostOwnerType::class.java)
+            .withEnum("owner_type", OwnerType::class.java)
             .withEnum("post_type", PostType::class.java)
             .build()
     }
@@ -51,7 +51,7 @@ class DatabaseConfiguration(private val databaseProperties: DatabaseProperties) 
         return listOf(
             enumConverterOf<Gender>(),
             enumConverterOf<UserType>(),
-            enumConverterOf<PostOwnerType>(),
+            enumConverterOf<OwnerType>(),
             enumConverterOf<PostType>()
         )
     }
