@@ -1,5 +1,6 @@
 package com.uniplat.uniplatapi.repository
 
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.model.UserFollow
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Pageable
@@ -15,18 +16,18 @@ interface UserFollowRepository : CoroutineCrudRepository<UserFollow, UUID> {
         """
         SELECT count(*)
         FROM user_follow
-        WHERE (:userId IS NULL OR user_id = :userId) AND (:followerId IS NULL OR follower_id = :followerId)
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:followType IS NULL OR follow_type = :followType)
         """
     )
-    suspend fun count(userId: UUID?, followerId: UUID?): Long
+    suspend fun count(userId: UUID?, followType: OwnerType?): Long
 
     @Query(
         """
         SELECT *
         FROM user_follow
-        WHERE (:userId IS NULL OR user_id = :userId) AND (:followerId IS NULL OR follower_id = :followerId)
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:followType IS NULL OR follow_type = :followType)
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllBy(userId: UUID?, followerId: UUID?, offset: Long, limit: Int): Flow<UserFollow>
+    fun findAllBy(userId: UUID?, followType: OwnerType?, offset: Long, limit: Int): Flow<UserFollow>
 }

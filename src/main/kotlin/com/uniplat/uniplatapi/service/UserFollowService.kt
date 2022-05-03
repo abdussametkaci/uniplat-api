@@ -1,6 +1,7 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserFollowRequest
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.model.UserFollow
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.extensions.saveUnique
@@ -13,9 +14,9 @@ import java.util.UUID
 @Service
 class UserFollowService(private val userFollowRepository: UserFollowRepository) {
 
-    suspend fun getAll(userId: UUID?, followerId: UUID?, pageable: Pageable): PaginatedModel<UserFollow> {
-        val count = userFollowRepository.count(userId, followerId)
-        val userContacts = userFollowRepository.findAllBy(userId, followerId, pageable.offset, pageable.pageSize)
+    suspend fun getAll(userId: UUID?, followType: OwnerType?, pageable: Pageable): PaginatedModel<UserFollow> {
+        val count = userFollowRepository.count(userId, followType)
+        val userContacts = userFollowRepository.findAllBy(userId, followType, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = userContacts,
@@ -29,10 +30,11 @@ class UserFollowService(private val userFollowRepository: UserFollowRepository) 
         with(request) {
             val userClub = UserFollow(
                 userId = userId,
-                followerId = followerId
+                followType = followType,
+                followId = followId
             )
 
-            return userFollowRepository.saveUnique(userClub) { throw ConflictException("error.user-contact.conflict", args = listOf(userId, followerId)) }
+            return userFollowRepository.saveUnique(userClub) { throw ConflictException("error.follow.conflict", args = listOf(userId, followType, followId)) }
         }
     }
 

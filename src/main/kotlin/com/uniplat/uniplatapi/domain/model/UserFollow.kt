@@ -1,5 +1,6 @@
 package com.uniplat.uniplatapi.domain.model
 
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
@@ -12,7 +13,8 @@ import java.util.UUID
 data class UserFollow(
     @Id val id: UUID? = null,
     val userId: UUID,
-    val followerId: UUID,
+    val followType: OwnerType,
+    val followId: UUID,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
     @LastModifiedDate var lastModifiedAt: Instant? = null

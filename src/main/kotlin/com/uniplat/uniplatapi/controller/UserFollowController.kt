@@ -2,6 +2,7 @@ package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserFollowRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserFollowResponse
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.model.PaginatedResponse
@@ -29,10 +30,10 @@ class UserFollowController(
     @GetMapping
     suspend fun getAll(
         @RequestParam userId: UUID?,
-        @RequestParam followerId: UUID?,
+        @RequestParam followerType: OwnerType?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<UserFollowResponse> {
-        return userFollowService.getAll(userId, followerId, pageable).convertWith(conversionService)
+        return userFollowService.getAll(userId, followerType, pageable).convertWith(conversionService)
     }
 
     @PostMapping
