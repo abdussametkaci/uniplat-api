@@ -1,4 +1,4 @@
-CREATE TYPE POST_OWNER_TYPE AS ENUM (
+CREATE TYPE OWNER_TYPE AS ENUM (
     'USER',
     'UNIVERSITY',
     'CLUB'
@@ -15,7 +15,7 @@ CREATE TABLE post
     id                UUID                        NOT NULL DEFAULT uuid_generate_v4(),
     img_id            UUID,
     description       VARCHAR(255),
-    post_owner_type   POST_OWNER_TYPE             NOT NULL,
+    owner_type        OWNER_TYPE                  NOT NULL,
     post_type         POST_TYPE                   NOT NULL,
     owner_id          UUID                        NOT NULL,
     shared_post_id    UUID,
