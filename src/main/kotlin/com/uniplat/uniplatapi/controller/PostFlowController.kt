@@ -1,7 +1,6 @@
 package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.response.PostResponse
-import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.PostService

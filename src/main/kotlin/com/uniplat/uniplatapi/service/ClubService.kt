@@ -41,22 +41,22 @@ class ClubService(private val clubRepository: ClubRepository) {
                 adminId = adminId
             )
 
-            return clubRepository.saveUnique(club) { throw ConflictException("error.club.conflict", args = listOf(name)) }
+            return clubRepository.saveUnique(club) { throw ConflictException("error.club.conflict", args = listOf(name, universityId)) }
         }
     }
 
     suspend fun update(id: UUID, request: UpdateClubRequest): Club {
-        with(request) {
-            val club = getById(id)
-
-            name?.let { club.name = it }
-            description?.let { club.description = it }
-            profileImgId?.let { club.profileImgId = it }
-            adminId?.let { club.adminId = it }
-            club.version = version
-
-            return clubRepository.save(club)
-        }
+        return getById(id)
+            .apply {
+                with(request) {
+                    this@apply.name = name
+                    this@apply.description = description
+                    this@apply.profileImgId = profileImgId
+                    this@apply.adminId = adminId
+                    this@apply.version = version
+                }
+            }
+            .let { clubRepository.saveUnique(it) { throw ConflictException("error.club.conflict", args = listOf(it.name, it.universityId)) } }
     }
 
     suspend fun delete(id: UUID) {

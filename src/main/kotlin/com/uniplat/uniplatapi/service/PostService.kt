@@ -32,7 +32,7 @@ class PostService(private val postRepository: PostRepository) {
     }
 
     suspend fun create(request: CreatePostRequest): Post {
-        validate(request)
+        validateCreate(request)
         with(request) {
             val post = Post(
                 imgId = imgId,
@@ -48,10 +48,10 @@ class PostService(private val postRepository: PostRepository) {
     }
 
     suspend fun update(id: UUID, request: UpdatePostRequest): Post {
+        val post = getById(id)
+        validateUpdate(request, post)
         with(request) {
-            val post = getById(id)
-
-            description?.let { post.description = it }
+            post.description = description
             post.version = version
 
             return postRepository.save(post)
@@ -74,9 +74,15 @@ class PostService(private val postRepository: PostRepository) {
         )
     }
 
-    private suspend fun validate(request: CreatePostRequest) {
+    private suspend fun validateCreate(request: CreatePostRequest) {
         with(request) {
             if (imgId == null && description == null) throw BadRequestException("error.post.invalid")
+        }
+    }
+
+    private suspend fun validateUpdate(request: UpdatePostRequest, model: Post) {
+        with(request) {
+            if (description == null && model.imgId == null) throw BadRequestException("error.post.update-invalid")
         }
     }
 }

@@ -53,22 +53,22 @@ class UserService(private val userRepository: UserRepository) {
     }
 
     suspend fun update(id: UUID, request: UpdateUserRequest): User {
-        with(request) {
-            val user = getById(id)
-
-            name?.let { user.name = it }
-            surname?.let { user.surname = it }
-            gender?.let { user.gender = it }
-            birthDate?.let { user.birthDate = it }
-            password?.let { user.password = it }
-            universityId?.let { user.universityId = it }
-            description?.let { user.description = it }
-            profileImgId?.let { user.profileImgId = it }
-            messageAccessed?.let { user.messageAccessed = it }
-            user.version = version
-
-            return userRepository.save(user)
-        }
+        return getById(id)
+            .apply {
+                with(request) {
+                    this@apply.name = name
+                    this@apply.surname = surname
+                    this@apply.gender = gender
+                    this@apply.birthDate = birthDate
+                    this@apply.password = password
+                    this@apply.universityId = universityId
+                    this@apply.description = description
+                    this@apply.profileImgId = profileImgId
+                    this@apply.messageAccessed = messageAccessed
+                    this@apply.version = version
+                }
+            }
+            .let { userRepository.saveUnique(it) { throw ConflictException("error.user.conflict", args = listOf(it.email)) } }
     }
 
     suspend fun delete(id: UUID) {

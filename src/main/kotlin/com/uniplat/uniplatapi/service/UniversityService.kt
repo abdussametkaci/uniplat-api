@@ -52,18 +52,19 @@ class UniversityService(
     }
 
     suspend fun update(id: UUID, request: UpdateUniversityRequest): University {
-        with(request) {
-            adminId?.let { validateAdmin(it) }
+        validateAdmin(request.adminId)
 
-            val university = getById(id)
-            name?.let { university.name = it }
-            description?.let { university.description = it }
-            profileImgId?.let { university.profileImgId = it }
-            adminId?.let { university.adminId = it }
-            university.version = version
-
-            return universityRepository.save(university)
-        }
+        return getById(id)
+            .apply {
+                with(request) {
+                    this@apply.name = name
+                    this@apply.description = description
+                    this@apply.profileImgId = profileImgId
+                    this@apply.adminId = adminId
+                    this@apply.version = version
+                }
+            }
+            .let { universityRepository.saveUnique(it) { throw ConflictException("error.university.conflict", args = listOf(it.name)) } }
     }
 
     suspend fun delete(id: UUID) {
