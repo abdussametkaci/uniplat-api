@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.repository
 
-import com.uniplat.uniplatapi.domain.enums.PostOwnerType
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Pageable
@@ -16,18 +16,18 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         """
         SELECT count(*)
         FROM post
-        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:postOwnerType IS NULL OR post_owner_type = :postOwnerType)
+        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType)
         """
     )
-    suspend fun count(ownerId: UUID?, postOwnerType: PostOwnerType?): Long
+    suspend fun count(ownerId: UUID?, ownerType: OwnerType?): Long
 
     @Query(
         """
         SELECT *
         FROM post
-        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:postOwnerType IS NULL OR post_owner_type = :postOwnerType)
+        WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType)
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllBy(ownerId: UUID?, postOwnerType: PostOwnerType?, offset: Long, limit: Int): Flow<Post>
+    fun findAllBy(ownerId: UUID?, ownerType: OwnerType?, offset: Long, limit: Int): Flow<Post>
 }

@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.domain.model
 
-import com.uniplat.uniplatapi.domain.enums.PostOwnerType
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
@@ -15,11 +15,11 @@ data class Post(
     @Id val id: UUID? = null,
     val imgId: UUID? = null,
     var description: String? = null,
-    val postOwnerType: PostOwnerType,
+    val ownerType: OwnerType,
     val postType: PostType,
     val ownerId: UUID,
     var sharedPostId: UUID? = null,
-    var likeCounter: Int = 0,
+    var activityStartAt: Instant? = null,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
     @LastModifiedDate var lastModifiedAt: Instant? = null

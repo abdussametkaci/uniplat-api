@@ -3,7 +3,7 @@ package com.uniplat.uniplatapi.controller
 import com.uniplat.uniplatapi.domain.dto.request.create.CreatePostRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdatePostRequest
 import com.uniplat.uniplatapi.domain.dto.response.PostResponse
-import com.uniplat.uniplatapi.domain.enums.PostOwnerType
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
@@ -35,10 +35,10 @@ class PostController(
     @GetMapping
     suspend fun getAll(
         @RequestParam ownerId: UUID?,
-        @RequestParam postOwnerType: PostOwnerType?,
+        @RequestParam ownerType: OwnerType?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<PostResponse> {
-        return postService.getAll(ownerId, postOwnerType, pageable).convertWith(conversionService)
+        return postService.getAll(ownerId, ownerType, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")

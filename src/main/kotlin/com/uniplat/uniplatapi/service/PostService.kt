@@ -2,7 +2,7 @@ package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreatePostRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdatePostRequest
-import com.uniplat.uniplatapi.domain.enums.PostOwnerType
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.model.Post
 import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.NotFoundException
@@ -15,9 +15,9 @@ import java.util.UUID
 @Service
 class PostService(private val postRepository: PostRepository) {
 
-    suspend fun getAll(ownerId: UUID?, postOwnerType: PostOwnerType?, pageable: Pageable): PaginatedModel<Post> {
-        val count = postRepository.count(ownerId, postOwnerType)
-        val posts = postRepository.findAllBy(ownerId, postOwnerType, pageable.offset, pageable.pageSize)
+    suspend fun getAll(ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<Post> {
+        val count = postRepository.count(ownerId, ownerType)
+        val posts = postRepository.findAllBy(ownerId, ownerType, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = posts,
@@ -37,7 +37,7 @@ class PostService(private val postRepository: PostRepository) {
             val post = Post(
                 imgId = imgId,
                 description = description,
-                postOwnerType = postOwnerType,
+                ownerType = ownerType,
                 postType = postType,
                 ownerId = ownerId,
                 sharedPostId = sharedPostId
@@ -60,12 +60,6 @@ class PostService(private val postRepository: PostRepository) {
 
     suspend fun delete(id: UUID) {
         postRepository.deleteById(id)
-    }
-
-    suspend fun like(id: UUID) {
-        val post = getById(id)
-        post.likeCounter++
-        postRepository.save(post)
     }
 
     private suspend fun validate(request: CreatePostRequest) {
