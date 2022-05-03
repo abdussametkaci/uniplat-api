@@ -14,9 +14,9 @@ import java.util.UUID
 @Service
 class UserFollowService(private val userFollowRepository: UserFollowRepository) {
 
-    suspend fun getAll(userId: UUID?, followType: OwnerType?, pageable: Pageable): PaginatedModel<UserFollow> {
-        val count = userFollowRepository.count(userId, followType)
-        val userContacts = userFollowRepository.findAllBy(userId, followType, pageable.offset, pageable.pageSize)
+    suspend fun getAll(userId: UUID?, followType: OwnerType?, followId: UUID?, pageable: Pageable): PaginatedModel<UserFollow> {
+        val count = userFollowRepository.count(userId, followType, followId)
+        val userContacts = userFollowRepository.findAllBy(userId, followType, followId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = userContacts,

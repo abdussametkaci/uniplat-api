@@ -31,9 +31,10 @@ class UserFollowController(
     suspend fun getAll(
         @RequestParam userId: UUID?,
         @RequestParam followerType: OwnerType?,
+        @RequestParam followId: UUID?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<UserFollowResponse> {
-        return userFollowService.getAll(userId, followerType, pageable).convertWith(conversionService)
+        return userFollowService.getAll(userId, followerType, followId, pageable).convertWith(conversionService)
     }
 
     @PostMapping

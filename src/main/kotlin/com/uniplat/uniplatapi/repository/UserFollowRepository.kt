@@ -16,18 +16,18 @@ interface UserFollowRepository : CoroutineCrudRepository<UserFollow, UUID> {
         """
         SELECT count(*)
         FROM user_follow
-        WHERE (:userId IS NULL OR user_id = :userId) AND (:followType IS NULL OR follow_type = :followType)
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:followType IS NULL OR follow_type = :followType) AND (:followId IS NULL OR follow_id = :followId)
         """
     )
-    suspend fun count(userId: UUID?, followType: OwnerType?): Long
+    suspend fun count(userId: UUID?, followType: OwnerType?, followId: UUID?): Long
 
     @Query(
         """
         SELECT *
         FROM user_follow
-        WHERE (:userId IS NULL OR user_id = :userId) AND (:followType IS NULL OR follow_type = :followType)
+        WHERE (:userId IS NULL OR user_id = :userId) AND (:followType IS NULL OR follow_type = :followType) AND (:followId IS NULL OR follow_id = :followId)
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllBy(userId: UUID?, followType: OwnerType?, offset: Long, limit: Int): Flow<UserFollow>
+    fun findAllBy(userId: UUID?, followType: OwnerType?, followId: UUID?, offset: Long, limit: Int): Flow<UserFollow>
 }
