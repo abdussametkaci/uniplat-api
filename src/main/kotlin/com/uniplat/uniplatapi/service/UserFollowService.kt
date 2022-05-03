@@ -16,10 +16,10 @@ class UserFollowService(private val userFollowRepository: UserFollowRepository) 
 
     suspend fun getAll(userId: UUID?, followType: OwnerType?, followId: UUID?, pageable: Pageable): PaginatedModel<UserFollow> {
         val count = userFollowRepository.count(userId, followType, followId)
-        val userContacts = userFollowRepository.findAllBy(userId, followType, followId, pageable.offset, pageable.pageSize)
+        val userFollows = userFollowRepository.findAllBy(userId, followType, followId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
-            content = userContacts,
+            content = userFollows,
             number = pageable.pageNumber,
             size = pageable.pageSize,
             totalElements = count
