@@ -62,6 +62,18 @@ class PostService(private val postRepository: PostRepository) {
         postRepository.deleteById(id)
     }
 
+    suspend fun postFlowByUserId(userId: UUID, pageable: Pageable): PaginatedModel<Post> {
+        val count = postRepository.countPostFlowByUserId(userId)
+        val posts = postRepository.postFlowByUserId(userId, pageable.offset, pageable.pageSize)
+
+        return PaginatedModel(
+            content = posts,
+            number = pageable.pageNumber,
+            size = pageable.pageSize,
+            totalElements = count
+        )
+    }
+
     private suspend fun validate(request: CreatePostRequest) {
         with(request) {
             if (imgId == null && description == null) throw BadRequestException("error.post.invalid")

@@ -30,4 +30,32 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         """
     )
     fun findAllBy(ownerId: UUID?, ownerType: OwnerType?, offset: Long, limit: Int): Flow<Post>
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM post
+        WHERE (owner_type, owner_id) IN (
+            SELECT follow_type, follow_id
+            FROM user_follow
+            WHERE user_id = :userId
+        )
+        """
+    )
+    suspend fun countPostFlowByUserId(userId: UUID): Long
+
+    @Query(
+        """
+        SELECT *
+        FROM post
+        WHERE (owner_type, owner_id) IN (
+            SELECT follow_type, follow_id
+            FROM user_follow
+            WHERE user_id = :userId
+        )
+        ORDER BY created_at DESC
+        OFFSET :offset LIMIT :limit
+        """
+    )
+    fun postFlowByUserId(userId: UUID, offset: Long, limit: Int): Flow<Post>
 }
