@@ -10,5 +10,5 @@ CREATE TABLE club
     created_at       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     last_modified_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE (name)
+    UNIQUE (name, university_id)
 );
