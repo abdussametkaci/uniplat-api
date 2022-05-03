@@ -6,7 +6,7 @@ CREATE TABLE club
     description      VARCHAR(255),
     profile_img_id   UUID,
     admin_id         UUID                        NOT NULL,
-    version          INTEGER                     NOT NULL,
+    version          BIGINT                      NOT NULL,
     created_at       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     last_modified_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (id),
