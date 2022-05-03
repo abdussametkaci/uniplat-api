@@ -41,8 +41,8 @@ class UserLikedPostController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUserLikedPostRequest): UserLikedPostResponse {
-        return conversionService.convert(userLikedPostService.create(request))
+    suspend fun create(@RequestBody request: CreateUserLikedPostRequest) {
+        userLikedPostService.create(request)
     }
 
     @DeleteMapping("/{id}")

@@ -9,14 +9,10 @@ import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserLikedPostRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
-class UserLikedPostService(
-    private val userLikedPostRepository: UserLikedPostRepository,
-    private val postService: PostService
-) {
+class UserLikedPostService(private val userLikedPostRepository: UserLikedPostRepository) {
 
     suspend fun getAll(userId: UUID?, postId: UUID?, pageable: Pageable): PaginatedModel<UserLikedPost> {
         val count = userLikedPostRepository.count(userId, postId)
@@ -34,22 +30,23 @@ class UserLikedPostService(
         return userLikedPostRepository.findById(id) ?: throw NotFoundException("error.user-liked-post.not-found", args = listOf(id))
     }
 
-    @Transactional
-    suspend fun create(request: CreateUserLikedPostRequest): UserLikedPost {
+    suspend fun create(request: CreateUserLikedPostRequest) {
         with(request) {
             val userLikedPost = UserLikedPost(
                 userId = userId,
                 postId = postId
             )
 
-            postService.like(postId)
-
-            return userLikedPostRepository.saveUnique(userLikedPost) {
-                throw ConflictException(
-                    "error.user-liked-post.conflict",
-                    args = listOf(userId, postId)
-                )
-            }
+            userLikedPostRepository.findByUserIdAndPostId(userId, postId)
+                ?.let { delete(it.id!!) }
+                ?: run {
+                    userLikedPostRepository.saveUnique(userLikedPost) {
+                        throw ConflictException(
+                            "error.user-liked-post.conflict",
+                            args = listOf(userId, postId)
+                        )
+                    }
+                }
         }
     }
 
