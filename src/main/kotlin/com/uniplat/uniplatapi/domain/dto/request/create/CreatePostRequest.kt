@@ -2,6 +2,7 @@ package com.uniplat.uniplatapi.domain.dto.request.create
 
 import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
+import java.time.Instant
 import java.util.UUID
 import javax.validation.constraints.Size
 
@@ -14,5 +15,7 @@ data class CreatePostRequest(
     val ownerType: OwnerType,
     val postType: PostType,
     val ownerId: UUID,
-    val sharedPostId: UUID?
+    val sharedPostId: UUID?,
+    val activityTitle: String?,
+    val activityStartAt: Instant?
 )

@@ -19,6 +19,7 @@ data class Post(
     val postType: PostType,
     val ownerId: UUID,
     var sharedPostId: UUID? = null,
+    val activityTitle: String? = null,
     var activityStartAt: Instant? = null,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,

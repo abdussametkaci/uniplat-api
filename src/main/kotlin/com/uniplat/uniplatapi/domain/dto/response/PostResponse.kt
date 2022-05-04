@@ -13,6 +13,7 @@ data class PostResponse(
     val postType: PostType,
     val ownerId: UUID,
     val sharedPostId: UUID?,
+    val activityTitle: String?,
     val activityStartAt: Instant?,
     val version: Int,
     val createdAt: Instant,

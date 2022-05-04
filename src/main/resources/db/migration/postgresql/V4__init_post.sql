@@ -19,6 +19,7 @@ CREATE TABLE post
     post_type         POST_TYPE                   NOT NULL,
     owner_id          UUID                        NOT NULL,
     shared_post_id    UUID,
+    activity_title    VARCHAR(255),
     activity_start_at TIMESTAMP WITHOUT TIME ZONE,
     version           BIGINT                      NOT NULL,
     created_at        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
