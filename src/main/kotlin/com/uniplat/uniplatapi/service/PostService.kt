@@ -77,6 +77,9 @@ class PostService(private val postRepository: PostRepository) {
     private suspend fun validateCreate(request: CreatePostRequest) {
         with(request) {
             if (imgId == null && description == null) throw BadRequestException("error.post.invalid")
+            sharedPostId?.let { postId ->
+                getById(postId).takeIf { it.sharedPostId != null }?.let { throw BadRequestException("error.post.shared-invalid") }
+            }
         }
     }
 
