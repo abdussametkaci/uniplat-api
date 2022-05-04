@@ -1,22 +1,29 @@
 package com.uniplat.uniplatapi.extensions
 
+import com.uniplat.uniplatapi.configuration.holder.ReactiveRequestContextHolder
 import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.UniplatException
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.withContext
 import org.springframework.core.convert.ConversionService
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.r2dbc.convert.EnumWriteSupport
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import java.time.Duration
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.validation.Validator
 
@@ -82,4 +89,15 @@ private fun Validator.validateObject(any: Any) {
     }
 
     if (validate(any).isNotEmpty()) throw BadRequestException("error.field.invalid", errors = errorList)
+}
+
+suspend fun <T> withUserId(block: suspend (UUID) -> T): T {
+    val userId =
+        ReactiveRequestContextHolder.request
+            .mapNotNull { request: ServerHttpRequest ->
+                request.headers.getFirst("userId")
+            }.awaitFirstOrNull()
+
+    return if (userId != null) block(UUID.fromString(userId))
+    else throw BadRequestException("error.*.userId-empty")
 }
