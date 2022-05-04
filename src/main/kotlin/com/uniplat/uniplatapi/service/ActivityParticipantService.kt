@@ -10,6 +10,7 @@ import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.ActivityParticipantRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.UUID
 
 @Service
@@ -32,10 +33,7 @@ class ActivityParticipantService(
 
     suspend fun create(request: CreateActivityParticipantRequest): ActivityParticipant {
         with(request) {
-            val post = postService.getById(postId)
-            if (post.postType != PostType.ACTIVITY) {
-                throw BadRequestException("error.activity-participant.invalid")
-            }
+            validate(postId)
 
             val userClub = ActivityParticipant(
                 userId = userId,
@@ -53,5 +51,14 @@ class ActivityParticipantService(
 
     suspend fun delete(id: UUID) {
         activityParticipantRepository.deleteById(id)
+    }
+
+    private suspend fun validate(postId: UUID) {
+        val post = postService.getById(postId)
+        if (post.postType != PostType.ACTIVITY) {
+            throw BadRequestException("error.activity-participant.invalid")
+        } else {
+            if (post.activityStartAt!!.isBefore(Instant.now())) throw BadRequestException("error.activity-participant.passed-invalid")
+        }
     }
 }
