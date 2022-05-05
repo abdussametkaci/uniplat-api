@@ -1,9 +1,11 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserPasswordRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
+import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.extensions.saveUnique
@@ -70,7 +72,26 @@ class UserService(private val userRepository: UserRepository) {
             .let { userRepository.saveUnique(it) { throw ConflictException("error.user.conflict", args = listOf(it.email)) } }
     }
 
+    suspend fun updatePassword(id: UUID, request: UpdateUserPasswordRequest): User {
+        return getById(id)
+            .also { validate(it, request) }
+            .apply {
+                with(request) {
+                    this@apply.password = newPassword
+                    this@apply.version = version
+                }
+            }
+            .let { userRepository.saveUnique(it) { throw ConflictException("error.user.conflict", args = listOf(it.email)) } }
+    }
+
     suspend fun delete(id: UUID) {
         userRepository.deleteById(id)
+    }
+
+    private suspend fun validate(user: User, request: UpdateUserPasswordRequest) {
+        with(request) {
+            if (currentPassword == newPassword) throw BadRequestException("error.user.comparing-password-invalid")
+            if (user.password != currentPassword) throw BadRequestException("error.user.update-password-invalid")
+        }
     }
 }

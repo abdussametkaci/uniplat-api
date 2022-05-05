@@ -1,6 +1,7 @@
 package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
+import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserPasswordRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.extensions.convert
@@ -51,6 +52,13 @@ class UserController(
     suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserRequest): UserResponse {
         return validator.withValidateSuspend(request) {
             conversionService.convert(userService.update(id, request))
+        }
+    }
+
+    @PutMapping("/{id}/password")
+    suspend fun updatePassword(@PathVariable id: UUID, @RequestBody request: UpdateUserPasswordRequest): UserResponse {
+        return validator.withValidateSuspend(request) {
+            conversionService.convert(userService.updatePassword(id, request))
         }
     }
 
