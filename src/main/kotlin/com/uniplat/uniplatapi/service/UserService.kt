@@ -60,7 +60,6 @@ class UserService(private val userRepository: UserRepository) {
                     this@apply.surname = surname
                     this@apply.gender = gender
                     this@apply.birthDate = birthDate
-                    this@apply.password = password
                     this@apply.universityId = universityId
                     this@apply.description = description
                     this@apply.profileImgId = profileImgId
