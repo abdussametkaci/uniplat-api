@@ -18,7 +18,9 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
     fun findAllBy(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, offset: Long, limit: Int): Flow<PostDTO> {
         val query = """
-            SELECT *, exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
+            SELECT *, 
+                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
+                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
             FROM post
             WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType)
             OFFSET :offset LIMIT :limit
@@ -38,7 +40,9 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
     suspend fun findById(id: UUID, userId: UUID): PostDTO? {
         val query = """
-            SELECT *, exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
+            SELECT *, 
+                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
+                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
             FROM post
             WHERE owner_id = :ownerId AND owner_type = :ownerType
         """.trimIndent()
@@ -53,7 +57,9 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
     fun postFlowByUserId(userId: UUID, offset: Long, limit: Int): Flow<PostDTO> {
         val query = """
-            SELECT *, exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
+            SELECT *, 
+                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
+                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
             FROM post
             WHERE (owner_type, owner_id) IN (
                 SELECT follow_type, follow_id
