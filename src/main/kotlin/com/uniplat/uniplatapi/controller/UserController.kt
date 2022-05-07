@@ -3,9 +3,11 @@ package com.uniplat.uniplatapi.controller
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserPasswordRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
+import com.uniplat.uniplatapi.domain.dto.response.UserDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withUserId
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserService
@@ -32,13 +34,17 @@ class UserController(
 ) {
 
     @GetMapping
-    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserResponse> {
-        return userService.getAll(pageable).convertWith(conversionService)
+    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserDTOResponse> {
+        return withUserId { userId ->
+            userService.getAll(userId, pageable).convertWith(conversionService)
+        }
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): UserResponse {
-        return conversionService.convert(userService.getById(id))
+    suspend fun getById(@PathVariable id: UUID): UserDTOResponse {
+        return withUserId { userId ->
+            conversionService.convert(userService.getById(id, userId))
+        }
     }
 
     @PostMapping
