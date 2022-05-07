@@ -5,9 +5,11 @@ import com.uniplat.uniplatapi.domain.dto.request.update.UpdatePostRequest
 import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.domain.model.Post
+import com.uniplat.uniplatapi.domain.model.PostDTO
 import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.model.PaginatedModel
+import com.uniplat.uniplatapi.repository.PostDTORepository
 import com.uniplat.uniplatapi.repository.PostRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -15,7 +17,10 @@ import java.time.Instant
 import java.util.UUID
 
 @Service
-class PostService(private val postRepository: PostRepository) {
+class PostService(
+    private val postRepository: PostRepository,
+    private val postDTORepository: PostDTORepository
+) {
 
     suspend fun getAll(ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<Post> {
         val count = postRepository.count(ownerId, ownerType)
@@ -27,6 +32,22 @@ class PostService(private val postRepository: PostRepository) {
             size = pageable.pageSize,
             totalElements = count
         )
+    }
+
+    suspend fun getAllDTO(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<PostDTO> {
+        val count = postRepository.count(ownerId, ownerType)
+        val posts = postDTORepository.findAllBy(userId, ownerId!!, ownerType!!, pageable.offset, pageable.pageSize)
+
+        return PaginatedModel(
+            content = posts,
+            number = pageable.pageNumber,
+            size = pageable.pageSize,
+            totalElements = count
+        )
+    }
+
+    suspend fun getByIdDTO(id: UUID, userId: UUID): PostDTO {
+        return postDTORepository.findById(id, userId) ?: throw NotFoundException("error.post.not-found", args = listOf(id))
     }
 
     suspend fun getById(id: UUID): Post {
@@ -67,9 +88,9 @@ class PostService(private val postRepository: PostRepository) {
         postRepository.deleteById(id)
     }
 
-    suspend fun postFlowByUserId(userId: UUID, pageable: Pageable): PaginatedModel<Post> {
+    suspend fun postFlowByUserId(userId: UUID, pageable: Pageable): PaginatedModel<PostDTO> {
         val count = postRepository.countPostFlowByUserId(userId)
-        val posts = postRepository.postFlowByUserId(userId, pageable.offset, pageable.pageSize)
+        val posts = postDTORepository.postFlowByUserId(userId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = posts,
