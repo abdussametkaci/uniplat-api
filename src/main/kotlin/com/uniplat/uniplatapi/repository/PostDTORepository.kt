@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations
 import org.springframework.r2dbc.core.awaitOneOrNull
+import org.springframework.r2dbc.core.bind
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.util.UUID
@@ -15,11 +16,11 @@ import java.util.UUID
 @Repository
 class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
-    fun findAllBy(userId: UUID, ownerId: UUID, ownerType: OwnerType, offset: Long, limit: Int): Flow<PostDTO> {
+    fun findAllBy(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, offset: Long, limit: Int): Flow<PostDTO> {
         val query = """
             SELECT *, exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
             FROM post
-            WHERE owner_id = :ownerId AND owner_type = :ownerType
+            WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType)
             OFFSET :offset LIMIT :limit
         """.trimIndent()
 

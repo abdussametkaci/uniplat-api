@@ -36,7 +36,7 @@ class PostService(
 
     suspend fun getAllDTO(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<PostDTO> {
         val count = postRepository.count(ownerId, ownerType)
-        val posts = postDTORepository.findAllBy(userId, ownerId!!, ownerType!!, pageable.offset, pageable.pageSize)
+        val posts = postDTORepository.findAllBy(userId, ownerId, ownerType, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = posts,
