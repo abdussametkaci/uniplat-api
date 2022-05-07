@@ -34,7 +34,7 @@ class PostService(
         )
     }
 
-    suspend fun getAllDTO(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<PostDTO> {
+    suspend fun getAll(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<PostDTO> {
         val count = postRepository.count(ownerId, ownerType)
         val posts = postDTORepository.findAllBy(userId, ownerId, ownerType, pageable.offset, pageable.pageSize)
 
@@ -46,7 +46,7 @@ class PostService(
         )
     }
 
-    suspend fun getByIdDTO(id: UUID, userId: UUID): PostDTO {
+    suspend fun getById(id: UUID, userId: UUID): PostDTO {
         return postDTORepository.findById(id, userId) ?: throw NotFoundException("error.post.not-found", args = listOf(id))
     }
 

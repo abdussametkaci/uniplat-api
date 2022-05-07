@@ -41,7 +41,7 @@ class PostController(
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<PostDTOResponse> {
         return withUserId { userId ->
-            postService.getAllDTO(userId, ownerId, ownerType, pageable).convertWith(conversionService)
+            postService.getAll(userId, ownerId, ownerType, pageable).convertWith(conversionService)
         }
     }
 
@@ -57,7 +57,7 @@ class PostController(
     @GetMapping("/{id}")
     suspend fun getById(@PathVariable id: UUID): PostDTOResponse {
         return withUserId { userId ->
-            conversionService.convert(postService.getByIdDTO(id, userId))
+            conversionService.convert(postService.getById(id, userId))
         }
     }
 
