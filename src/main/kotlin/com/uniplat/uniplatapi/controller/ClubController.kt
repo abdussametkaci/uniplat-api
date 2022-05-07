@@ -5,6 +5,7 @@ import com.uniplat.uniplatapi.domain.dto.request.update.UpdateClubRequest
 import com.uniplat.uniplatapi.domain.dto.response.ClubResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withUserId
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.ClubService
@@ -36,12 +37,16 @@ class ClubController(
         @RequestParam universityId: UUID?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<ClubResponse> {
-        return clubService.getAll(universityId, pageable).convertWith(conversionService)
+        return withUserId { userId ->
+            clubService.getAllDTO(userId, universityId, pageable).convertWith(conversionService)
+        }
     }
 
     @GetMapping("/{id}")
     suspend fun getById(@PathVariable id: UUID): ClubResponse {
-        return conversionService.convert(clubService.getById(id))
+        return withUserId { userId ->
+            conversionService.convert(clubService.getByIdDTO(id, userId))
+        }
     }
 
     @PostMapping
