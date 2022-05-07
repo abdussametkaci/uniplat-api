@@ -18,9 +18,22 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
     fun findAllBy(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, offset: Long, limit: Int): Flow<PostDTO> {
         val query = """
-            SELECT *, 
-                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
-                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
+            SELECT *,
+                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user,
+                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like,
+                   (CASE WHEN post.post_type = 'ACTIVITY' THEN (
+                        exists(SELECT *
+                               FROM activity_participant ap
+                               WHERE ap.user_id = :userId AND ap.post_id = post.id
+                            )
+                       )
+                   END) AS activity_participated_by_user,
+                   (CASE WHEN post.post_type = 'ACTIVITY' THEN (
+                       SELECT count(*)
+                       FROM activity_participant ap
+                       WHERE ap.post_id = post.id
+                       )
+                   END) AS activity_count_participant
             FROM post
             WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType)
             OFFSET :offset LIMIT :limit
@@ -40,11 +53,24 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
     suspend fun findById(id: UUID, userId: UUID): PostDTO? {
         val query = """
-            SELECT *, 
-                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
-                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
+            SELECT *,
+                   exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user,
+                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like,
+                   (CASE WHEN post.post_type = 'ACTIVITY' THEN (
+                        exists(SELECT *
+                               FROM activity_participant ap
+                               WHERE ap.user_id = :userId AND ap.post_id = post.id
+                            )
+                       )
+                   END) AS activity_participated_by_user,
+                   (CASE WHEN post.post_type = 'ACTIVITY' THEN (
+                       SELECT count(*)
+                       FROM activity_participant ap
+                       WHERE ap.post_id = post.id
+                       )
+                   END) AS activity_count_participant
             FROM post
-            WHERE id = :id
+            WHERE post.id = :id
         """.trimIndent()
 
         return databaseTemplate.databaseClient
@@ -59,14 +85,27 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
         val query = """
             SELECT *, 
                    exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
-                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
+                   (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like,
+                   (CASE WHEN post.post_type = 'ACTIVITY' THEN (
+                        exists(SELECT *
+                               FROM activity_participant ap
+                               WHERE ap.user_id = :userId AND ap.post_id = post.id
+                            )
+                       )
+                   END) AS activity_participated_by_user,
+                   (CASE WHEN post.post_type = 'ACTIVITY' THEN (
+                       SELECT count(*)
+                       FROM activity_participant ap
+                       WHERE ap.post_id = post.id
+                       )
+                   END) AS activity_count_participant
             FROM post
             WHERE (owner_type, owner_id) IN (
                 SELECT follow_type, follow_id
                 FROM user_follow
                 WHERE user_id = :userId
             )
-            ORDER BY created_at DESC
+            ORDER BY post.created_at DESC
             OFFSET :offset LIMIT :limit
         """.trimIndent()
 
@@ -95,7 +134,9 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             createdAt = row.get("created_at", Instant::class.javaObjectType)!!,
             lastModifiedAt = row.get("last_modified_at", Instant::class.javaObjectType)!!,
             likedByUser = row.get("liked_by_user", Boolean::class.javaObjectType)!!,
-            countLike = row.get("count_like", Long::class.javaObjectType)!!
+            countLike = row.get("count_like", Long::class.javaObjectType)!!,
+            activityParticipatedByUser = row.get("activity_participated_by_user", Boolean::class.javaObjectType),
+            activityCountParticipant = row.get("activity_count_participant", Long::class.javaObjectType)
         )
     }
 }
