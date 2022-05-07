@@ -38,14 +38,14 @@ class ClubController(
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<ClubResponse> {
         return withUserId { userId ->
-            clubService.getAllDTO(userId, universityId, pageable).convertWith(conversionService)
+            clubService.getAll(userId, universityId, pageable).convertWith(conversionService)
         }
     }
 
     @GetMapping("/{id}")
     suspend fun getById(@PathVariable id: UUID): ClubResponse {
         return withUserId { userId ->
-            conversionService.convert(clubService.getByIdDTO(id, userId))
+            conversionService.convert(clubService.getById(id, userId))
         }
     }
 

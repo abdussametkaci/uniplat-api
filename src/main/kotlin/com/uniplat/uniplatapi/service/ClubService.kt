@@ -32,7 +32,7 @@ class ClubService(
         )
     }
 
-    suspend fun getAllDTO(userId: UUID, universityId: UUID?, pageable: Pageable): PaginatedModel<ClubDTO> {
+    suspend fun getAll(userId: UUID, universityId: UUID?, pageable: Pageable): PaginatedModel<ClubDTO> {
         val count = clubRepository.count(universityId)
         val clubs = clubDTORepository.findAllBy(userId, universityId, pageable.offset, pageable.pageSize)
 
@@ -44,7 +44,7 @@ class ClubService(
         )
     }
 
-    suspend fun getByIdDTO(id: UUID, userId: UUID): ClubDTO {
+    suspend fun getById(id: UUID, userId: UUID): ClubDTO {
         return clubDTORepository.findById(id, userId) ?: throw NotFoundException("error.club.not-found", args = listOf(id))
     }
 
