@@ -44,7 +44,7 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                    exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user, 
                    (SELECT count(*) FROM user_liked_post WHERE post_id = post.id) AS count_like
             FROM post
-            WHERE owner_id = :ownerId AND owner_type = :ownerType
+            WHERE id = :id
         """.trimIndent()
 
         return databaseTemplate.databaseClient
