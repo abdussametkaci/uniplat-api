@@ -2,9 +2,11 @@ package com.uniplat.uniplatapi.controller
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityRequest
+import com.uniplat.uniplatapi.domain.dto.response.UniversityDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.UniversityResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withUserId
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UniversityService
@@ -31,13 +33,17 @@ class UniversityController(
 ) {
 
     @GetMapping
-    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UniversityResponse> {
-        return universityService.getAll(pageable).convertWith(conversionService)
+    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UniversityDTOResponse> {
+        return withUserId { userId ->
+            universityService.getAll(userId, pageable).convertWith(conversionService)
+        }
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): UniversityResponse {
-        return conversionService.convert(universityService.getById(id))
+    suspend fun getById(@PathVariable id: UUID): UniversityDTOResponse {
+        return withUserId { userId ->
+            conversionService.convert(universityService.getById(id, userId))
+        }
     }
 
     @PostMapping

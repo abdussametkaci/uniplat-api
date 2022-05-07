@@ -4,11 +4,13 @@ import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityRequest
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.University
+import com.uniplat.uniplatapi.domain.model.UniversityDTO
 import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
+import com.uniplat.uniplatapi.repository.UniversityDTORepository
 import com.uniplat.uniplatapi.repository.UniversityRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -17,6 +19,7 @@ import java.util.UUID
 @Service
 class UniversityService(
     private val universityRepository: UniversityRepository,
+    private val universityDTORepository: UniversityDTORepository,
     private val userService: UserService
 ) {
 
@@ -30,6 +33,22 @@ class UniversityService(
             size = pageable.pageSize,
             totalElements = count
         )
+    }
+
+    suspend fun getAll(userId: UUID, pageable: Pageable): PaginatedModel<UniversityDTO> {
+        val count = universityRepository.count()
+        val universities = universityDTORepository.findAllBy(userId, pageable.offset, pageable.pageSize)
+
+        return PaginatedModel(
+            content = universities,
+            number = pageable.pageNumber,
+            size = pageable.pageSize,
+            totalElements = count
+        )
+    }
+
+    suspend fun getById(id: UUID, userId: UUID): UniversityDTO {
+        return universityDTORepository.findById(id, userId) ?: throw NotFoundException("error.university.not-found", args = listOf(id))
     }
 
     suspend fun getById(id: UUID): University {
