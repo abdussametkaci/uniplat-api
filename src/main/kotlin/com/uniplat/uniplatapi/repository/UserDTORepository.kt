@@ -24,7 +24,7 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                            WHERE user_id = :userId AND follow_type = 'USER' AND follow_id = u.id
                        ) AS followed_by_user,
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower,
-                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND user_id = u.id) AS count_follow
+                   (SELECT count(*) FROM user_follow WHERE user_id = u.id) AS count_follow
             FROM "user" u
             OFFSET :offset LIMIT :limit
         """.trimIndent()
@@ -48,7 +48,7 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                            WHERE user_id = :userId AND follow_type = 'USER' AND follow_id = u.id
                        ) AS followed_by_user,
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower,
-                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND user_id = u.id) AS count_follow
+                   (SELECT count(*) FROM user_follow WHERE user_id = u.id) AS count_follow
             FROM "user" u
             WHERE id = :id
         """.trimIndent()
