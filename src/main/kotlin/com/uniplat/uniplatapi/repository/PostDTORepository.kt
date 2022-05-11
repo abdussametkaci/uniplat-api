@@ -10,6 +10,7 @@ import org.springframework.data.r2dbc.core.R2dbcEntityOperations
 import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.r2dbc.core.bind
 import org.springframework.stereotype.Repository
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
 
@@ -138,7 +139,10 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             likedByUser = row.get("liked_by_user", Boolean::class.javaObjectType)!!,
             countLike = row.get("count_like", Long::class.javaObjectType)!!,
             activityParticipatedByUser = row.get("activity_participated_by_user", Boolean::class.javaObjectType),
-            activityCountParticipant = row.get("activity_count_participant", Long::class.javaObjectType)
+            activityCountParticipant = row.get("activity_count_participant", Long::class.javaObjectType),
+            activityLocationDescription = row.get("activity_location_description", String::class.javaObjectType),
+            latitude = row.get("latitude", BigDecimal::class.javaObjectType),
+            longitude = row.get("longitude", BigDecimal::class.javaObjectType)
         )
     }
 }

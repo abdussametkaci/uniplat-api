@@ -13,6 +13,7 @@ import com.uniplat.uniplatapi.repository.PostDTORepository
 import com.uniplat.uniplatapi.repository.PostRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
 
@@ -65,7 +66,10 @@ class PostService(
                 ownerId = ownerId,
                 sharedPostId = sharedPostId,
                 activityTitle = activityTitle,
-                activityStartAt = activityStartAt
+                activityStartAt = activityStartAt,
+                activityLocationDescription = activityLocationDescription,
+                latitude = latitude,
+                longitude = longitude
             )
 
             return postRepository.save(post)
@@ -78,6 +82,9 @@ class PostService(
         with(request) {
             post.description = description
             post.activityStartAt = activityStartAt
+            post.activityLocationDescription = activityLocationDescription
+            post.latitude = latitude
+            post.longitude = longitude
             post.version = version
 
             return postRepository.save(post)
@@ -112,6 +119,7 @@ class PostService(
                 if (activityTitle == null || activityStartAt == null) throw BadRequestException("error.post.activity-type-invalid")
                 if (activityStartAt.isBefore(Instant.now())) throw BadRequestException("error.post.activity-start-invalid")
             }
+            validateLocation(latitude, longitude)
         }
     }
 
@@ -123,6 +131,21 @@ class PostService(
                 if (Instant.now().isAfter(model.activityStartAt!!)) throw BadRequestException("error.post.update-activity-started-invalid")
                 if (activityStartAt!!.isBefore(Instant.now())) throw BadRequestException("error.post.update-activity-start-invalid")
             }
+            validateLocation(latitude, longitude)
+        }
+    }
+
+    private suspend fun validateLocation(latitude: BigDecimal?, longitude: BigDecimal?) {
+        if (latitude == null || longitude == null) throw BadRequestException("error.post.location-invalid")
+        else {
+            if (latitude < BigDecimal.valueOf(-90) || latitude > BigDecimal.valueOf(90)) throw BadRequestException(
+                "error.post.latitude-invalid",
+                args = listOf(latitude)
+            )
+            if (longitude < BigDecimal.valueOf(-180) || longitude > BigDecimal.valueOf(180)) throw BadRequestException(
+                "error.post.longitude-invalid",
+                args = listOf(longitude)
+            )
         }
     }
 }

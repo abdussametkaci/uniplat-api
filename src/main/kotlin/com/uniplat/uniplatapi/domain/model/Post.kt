@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Table
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
 
@@ -21,6 +22,9 @@ data class Post(
     var sharedPostId: UUID? = null,
     val activityTitle: String? = null,
     var activityStartAt: Instant? = null,
+    var activityLocationDescription: String? = null,
+    var latitude: BigDecimal? = null,
+    var longitude: BigDecimal? = null,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
     @LastModifiedDate var lastModifiedAt: Instant? = null
