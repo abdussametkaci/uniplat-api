@@ -23,7 +23,8 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                            FROM user_follow
                            WHERE user_id = :userId AND follow_type = 'USER' AND follow_id = u.id
                        ) AS followed_by_user,
-                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower
+                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower,
+                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND user_id = u.id) AS count_follow
             FROM "user" u
             OFFSET :offset LIMIT :limit
         """.trimIndent()
@@ -46,7 +47,8 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                            FROM user_follow
                            WHERE user_id = :userId AND follow_type = 'USER' AND follow_id = u.id
                        ) AS followed_by_user,
-                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower
+                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower,
+                   (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND user_id = u.id) AS count_follow
             FROM "user" u
             WHERE id = :id
         """.trimIndent()
@@ -77,7 +79,8 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             createdAt = row.get("created_at", Instant::class.javaObjectType)!!,
             lastModifiedAt = row.get("last_modified_at", Instant::class.javaObjectType)!!,
             followedByUser = row.get("followed_by_user", Boolean::class.javaObjectType)!!,
-            countFollower = row.get("count_follower", Long::class.javaObjectType)!!
+            countFollower = row.get("count_follower", Long::class.javaObjectType)!!,
+            countFollow = row.get("count_follow", Long::class.javaObjectType)!!
         )
     }
 }

@@ -19,5 +19,6 @@ data class UserDTOResponse(
     val messageAccessed: Boolean,
     val version: Int,
     val followedByUser: Boolean,
-    val countFollower: Long
+    val countFollower: Long,
+    val countFollow: Long
 )

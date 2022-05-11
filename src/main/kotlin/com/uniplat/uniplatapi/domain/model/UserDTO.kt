@@ -22,5 +22,6 @@ data class UserDTO(
     val createdAt: Instant,
     val lastModifiedAt: Instant,
     val followedByUser: Boolean,
-    val countFollower: Long
+    val countFollower: Long,
+    val countFollow: Long
 )
