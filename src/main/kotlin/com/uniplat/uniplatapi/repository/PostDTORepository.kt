@@ -16,7 +16,7 @@ import java.util.UUID
 @Repository
 class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
-    fun findAllBy(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, offset: Long, limit: Int): Flow<PostDTO> {
+    fun findAllBy(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, postType: PostType?, offset: Long, limit: Int): Flow<PostDTO> {
         val query = """
             SELECT *,
                    exists(SELECT * FROM user_liked_post WHERE user_id = :userId AND post_id = post.id) AS liked_by_user,
@@ -35,7 +35,8 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                        )
                    END) AS activity_count_participant
             FROM post
-            WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType)
+            WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType) AND (:postType IS NULL OR post_type = :postType)
+            ORDER BY created_at DESC
             OFFSET :offset LIMIT :limit
         """.trimIndent()
 
@@ -44,6 +45,7 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .bind("userId", userId)
             .bind("ownerId", ownerId)
             .bind("ownerType", ownerType)
+            .bind("postType", postType)
             .bind("offset", offset)
             .bind("limit", limit)
             .map(::mapPostDTO)

@@ -5,6 +5,7 @@ import com.uniplat.uniplatapi.domain.dto.request.update.UpdatePostRequest
 import com.uniplat.uniplatapi.domain.dto.response.PostDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.PostResponse
 import com.uniplat.uniplatapi.domain.enums.OwnerType
+import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.extensions.withUserId
@@ -38,10 +39,11 @@ class PostController(
     suspend fun getAll(
         @RequestParam ownerId: UUID?,
         @RequestParam ownerType: OwnerType?,
+        @RequestParam postType: PostType?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<PostDTOResponse> {
         return withUserId { userId ->
-            postService.getAll(userId, ownerId, ownerType, pageable).convertWith(conversionService)
+            postService.getAll(userId, ownerId, ownerType, postType, pageable).convertWith(conversionService)
         }
     }
 

@@ -22,9 +22,9 @@ class PostService(
     private val postDTORepository: PostDTORepository
 ) {
 
-    suspend fun getAll(ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<Post> {
-        val count = postRepository.count(ownerId, ownerType)
-        val posts = postRepository.findAllBy(ownerId, ownerType, pageable.offset, pageable.pageSize)
+    suspend fun getAll(ownerId: UUID?, ownerType: OwnerType?, postType: PostType?, pageable: Pageable): PaginatedModel<Post> {
+        val count = postRepository.count(ownerId, ownerType, postType)
+        val posts = postRepository.findAllBy(ownerId, ownerType, postType, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = posts,
@@ -34,9 +34,9 @@ class PostService(
         )
     }
 
-    suspend fun getAll(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, pageable: Pageable): PaginatedModel<PostDTO> {
-        val count = postRepository.count(ownerId, ownerType)
-        val posts = postDTORepository.findAllBy(userId, ownerId, ownerType, pageable.offset, pageable.pageSize)
+    suspend fun getAll(userId: UUID, ownerId: UUID?, ownerType: OwnerType?, postType: PostType?, pageable: Pageable): PaginatedModel<PostDTO> {
+        val count = postRepository.count(ownerId, ownerType, postType)
+        val posts = postDTORepository.findAllBy(userId, ownerId, ownerType, postType, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = posts,
