@@ -59,4 +59,23 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         """
     )
     fun postFlowByUserId(userId: UUID, offset: Long, limit: Int): Flow<Post>
+
+    @Query(
+        """
+        SELECT *
+        FROM post
+        WHERE full_text @@ to_tsquery('simple', :text)
+        OFFSET :offset LIMIT :limit
+        """
+    )
+    fun findAllBy(text: String, offset: Long, limit: Int): Flow<Post>
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM post
+        WHERE full_text @@ to_tsquery('simple', :text)
+        """
+    )
+    suspend fun count(text: String): Long
 }

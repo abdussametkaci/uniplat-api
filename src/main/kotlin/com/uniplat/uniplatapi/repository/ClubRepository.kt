@@ -29,4 +29,23 @@ interface ClubRepository : CoroutineCrudRepository<Club, UUID> {
         """
     )
     fun findAllBy(universityId: UUID?, offset: Long, limit: Int): Flow<Club>
+
+    @Query(
+        """
+        SELECT *
+        FROM club
+        WHERE full_text @@ to_tsquery('simple', :text)
+        OFFSET :offset LIMIT :limit
+        """
+    )
+    fun findAllBy(text: String, offset: Long, limit: Int): Flow<Club>
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM club
+        WHERE full_text @@ to_tsquery('simple', :text)
+        """
+    )
+    suspend fun count(text: String): Long
 }
