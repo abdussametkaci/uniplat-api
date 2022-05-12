@@ -25,5 +25,6 @@ data class PostDTOResponse(
     val likedByUser: Boolean,
     val countLike: Long,
     val activityParticipatedByUser: Boolean?,
-    val activityCountParticipant: Long?
+    val activityCountParticipant: Long?,
+    val countComment: Long
 )

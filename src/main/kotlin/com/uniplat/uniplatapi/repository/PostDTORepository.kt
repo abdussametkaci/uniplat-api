@@ -34,7 +34,8 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                        FROM activity_participant ap
                        WHERE ap.post_id = post.id
                        )
-                   END) AS activity_count_participant
+                   END) AS activity_count_participant,
+                   (SELECT count(*) FROM post_comment WHERE post_id = post.id) AS count_comment
             FROM post
             WHERE (:ownerId IS NULL OR owner_id = :ownerId) AND (:ownerType IS NULL OR owner_type = :ownerType) AND (:postType IS NULL OR post_type = :postType)
             ORDER BY created_at DESC
@@ -71,7 +72,8 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                        FROM activity_participant ap
                        WHERE ap.post_id = post.id
                        )
-                   END) AS activity_count_participant
+                   END) AS activity_count_participant,
+                   (SELECT count(*) FROM post_comment WHERE post_id = post.id) AS count_comment
             FROM post
             WHERE post.id = :id
         """.trimIndent()
@@ -101,7 +103,8 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                        FROM activity_participant ap
                        WHERE ap.post_id = post.id
                        )
-                   END) AS activity_count_participant
+                   END) AS activity_count_participant,
+                   (SELECT count(*) FROM post_comment WHERE post_id = post.id) AS count_comment
             FROM post
             WHERE (owner_type, owner_id) IN (
                 SELECT follow_type, follow_id
@@ -142,7 +145,8 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             activityCountParticipant = row.get("activity_count_participant", Long::class.javaObjectType),
             activityLocationDescription = row.get("activity_location_description", String::class.javaObjectType),
             latitude = row.get("latitude", BigDecimal::class.javaObjectType),
-            longitude = row.get("longitude", BigDecimal::class.javaObjectType)
+            longitude = row.get("longitude", BigDecimal::class.javaObjectType),
+            countComment = row.get("count_comment", Long::class.javaObjectType)!!
         )
     }
 }
