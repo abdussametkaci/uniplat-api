@@ -29,4 +29,13 @@ interface UniversityRepository : CoroutineCrudRepository<University, UUID> {
         """
     )
     suspend fun count(text: String): Long
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM university
+        WHERE (:adminId IS NULL OR admin_id = :adminId)
+        """
+    )
+    suspend fun count(adminId: UUID?): Long
 }

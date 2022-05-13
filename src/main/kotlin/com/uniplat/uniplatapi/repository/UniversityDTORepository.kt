@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations
 import org.springframework.r2dbc.core.awaitOneOrNull
+import org.springframework.r2dbc.core.bind
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.util.UUID
@@ -13,7 +14,7 @@ import java.util.UUID
 @Repository
 class UniversityDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
-    fun findAllBy(userId: UUID, offset: Long, limit: Int): Flow<UniversityDTO> {
+    fun findAllBy(userId: UUID, adminId: UUID?, offset: Long, limit: Int): Flow<UniversityDTO> {
         val query = """
             SELECT *,
                    exists(
@@ -24,12 +25,14 @@ class UniversityDTORepository(private val databaseTemplate: R2dbcEntityOperation
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'UNIVERSITY' AND follow_id = university.id) AS count_follower,
                    (SELECT count(*) FROM club WHERE university_id = university.id) AS count_club
             FROM university
+            WHERE (:adminId IS NULL OR admin_id = :adminId)
             OFFSET :offset LIMIT :limit
         """.trimIndent()
 
         return databaseTemplate.databaseClient
             .sql(query)
             .bind("userId", userId)
+            .bind("adminId", adminId)
             .bind("offset", offset)
             .bind("limit", limit)
             .map(::mapUniversityDTO)
