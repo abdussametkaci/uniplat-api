@@ -111,6 +111,7 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                 FROM user_follow
                 WHERE user_id = :userId
             )
+            OR owner_id = :userId
             ORDER BY post.created_at DESC
             OFFSET :offset LIMIT :limit
         """.trimIndent()

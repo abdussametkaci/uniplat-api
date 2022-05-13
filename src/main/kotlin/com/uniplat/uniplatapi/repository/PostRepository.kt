@@ -41,6 +41,7 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
             FROM user_follow
             WHERE user_id = :userId
         )
+        OR owner_id = :userId
         """
     )
     suspend fun countPostFlowByUserId(userId: UUID): Long
@@ -54,6 +55,7 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
             FROM user_follow
             WHERE user_id = :userId
         )
+        OR owner_id = :userId
         ORDER BY created_at DESC
         OFFSET :offset LIMIT :limit
         """
