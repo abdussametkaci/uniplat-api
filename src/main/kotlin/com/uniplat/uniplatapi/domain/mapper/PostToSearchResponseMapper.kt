@@ -15,6 +15,7 @@ import org.springframework.core.convert.converter.Converter
 interface PostToSearchResponseMapper : Converter<Post, SearchResponse> {
 
     @Mappings(
+        Mapping(target = "name", ignore = true),
         Mapping(target = "searchType", ignore = true),
         Mapping(target = "profileImgId", ignore = true)
     )

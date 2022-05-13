@@ -14,6 +14,7 @@ import org.springframework.core.convert.converter.Converter
 interface UserToSearchResponseMapper : Converter<User, SearchResponse> {
 
     @Mappings(
+        Mapping(target = "name", ignore = true),
         Mapping(target = "searchType", ignore = true)
     )
     override fun convert(source: User): SearchResponse
