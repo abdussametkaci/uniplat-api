@@ -14,7 +14,7 @@ import java.util.UUID
 @Repository
 class ClubDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
-    fun findAllBy(userId: UUID, universityId: UUID?, offset: Long, limit: Int): Flow<ClubDTO> {
+    fun findAllBy(userId: UUID, universityId: UUID?, adminId: UUID?, offset: Long, limit: Int): Flow<ClubDTO> {
         val query = """
             SELECT *,
                    exists(
@@ -24,7 +24,7 @@ class ClubDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                        ) AS followed_by_user,
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'CLUB' AND follow_id = club.id) AS count_follower
             FROM club
-            WHERE (:universityId IS NULL OR university_id = :universityId)
+            WHERE (:universityId IS NULL OR university_id = :universityId) AND (:adminId IS NULL OR admin_id = :adminId)
             OFFSET :offset LIMIT :limit
         """.trimIndent()
 
@@ -32,6 +32,7 @@ class ClubDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .sql(query)
             .bind("userId", userId)
             .bind("universityId", universityId)
+            .bind("adminId", adminId)
             .bind("offset", offset)
             .bind("limit", limit)
             .map(::mapClubDTO)

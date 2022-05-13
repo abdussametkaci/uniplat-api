@@ -36,10 +36,11 @@ class ClubController(
     @GetMapping
     suspend fun getAll(
         @RequestParam universityId: UUID?,
+        @RequestParam adminId: UUID?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<ClubDTOResponse> {
         return withUserId { userId ->
-            clubService.getAll(userId, universityId, pageable).convertWith(conversionService)
+            clubService.getAll(userId, universityId, adminId, pageable).convertWith(conversionService)
         }
     }
 

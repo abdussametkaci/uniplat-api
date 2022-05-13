@@ -20,9 +20,9 @@ class ClubService(
     private val clubDTORepository: ClubDTORepository
 ) {
 
-    suspend fun getAll(universityId: UUID?, pageable: Pageable): PaginatedModel<Club> {
-        val count = clubRepository.count(universityId)
-        val clubs = clubRepository.findAllBy(universityId, pageable.offset, pageable.pageSize)
+    suspend fun getAll(universityId: UUID?, adminId: UUID?, pageable: Pageable): PaginatedModel<Club> {
+        val count = clubRepository.count(universityId, adminId)
+        val clubs = clubRepository.findAllBy(universityId, adminId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = clubs,
@@ -32,9 +32,9 @@ class ClubService(
         )
     }
 
-    suspend fun getAll(userId: UUID, universityId: UUID?, pageable: Pageable): PaginatedModel<ClubDTO> {
-        val count = clubRepository.count(universityId)
-        val clubs = clubDTORepository.findAllBy(userId, universityId, pageable.offset, pageable.pageSize)
+    suspend fun getAll(userId: UUID, universityId: UUID?, adminId: UUID?, pageable: Pageable): PaginatedModel<ClubDTO> {
+        val count = clubRepository.count(universityId, adminId)
+        val clubs = clubDTORepository.findAllBy(userId, universityId, adminId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(
             content = clubs,
