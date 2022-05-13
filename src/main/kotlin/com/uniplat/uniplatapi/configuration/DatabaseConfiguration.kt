@@ -6,6 +6,8 @@ import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.extensions.enumConverterOf
+import io.r2dbc.pool.ConnectionPool
+import io.r2dbc.pool.ConnectionPoolConfiguration
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
 import io.r2dbc.postgresql.PostgresqlConnectionFactory
 import io.r2dbc.postgresql.codec.EnumCodec
@@ -31,9 +33,9 @@ import org.springframework.r2dbc.core.DatabaseClient
 class DatabaseConfiguration(private val databaseProperties: DatabaseProperties) {
 
     @Bean
-    fun connectionFactory(): PostgresqlConnectionFactory {
-        return PostgresqlConnectionFactory(
-            with(databaseProperties) {
+    fun connectionFactory(): ConnectionFactory {
+        with(databaseProperties) {
+            val connectionFactory = PostgresqlConnectionFactory(
                 PostgresqlConnectionConfiguration.builder()
                     .host(host)
                     .port(port.toInt())
@@ -42,8 +44,17 @@ class DatabaseConfiguration(private val databaseProperties: DatabaseProperties) 
                     .password(password)
                     .codecRegistrar(getCodecRegistrar())
                     .build()
-            }
-        )
+            )
+
+            val configuration = ConnectionPoolConfiguration.builder(connectionFactory)
+                .maxIdleTime(connectionPool.maxIdleTime)
+                .initialSize(connectionPool.initialSize)
+                .maxSize(connectionPool.maxSize)
+                .maxCreateConnectionTime(connectionPool.maxCreateConnectionTime)
+                .build()
+
+            return ConnectionPool(configuration)
+        }
     }
 
     @Bean

@@ -15,6 +15,11 @@ database:
   name: ${DATABASE_NAME:uniplat}
   username: ${DATABASE_USERNAME:postgres}
   password: ${DATABASE_PASSWORD:postgres123}
+  connectionPool:
+    maxSize: ${MAX_POOL_SIZE:10}
+    initialSize: ${INITIAL_POOL_SIZE:5}
+    maxIdleTime: ${MAX_IDLE_TIME:PT30M}
+    maxCreateConnectionTime: ${MAX_CREATE_CONNECTION_TIME:PT5S}
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
