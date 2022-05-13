@@ -90,7 +90,7 @@ class UserService(
                     this@apply.version = version
                 }
             }
-            .let { userRepository.saveUnique(it) { throw ConflictException("error.user.conflict", args = listOf(it.email)) } }
+            .let { userRepository.save(it) }
     }
 
     suspend fun updatePassword(id: UUID, request: UpdateUserPasswordRequest): User {
@@ -102,7 +102,7 @@ class UserService(
                     this@apply.version = version
                 }
             }
-            .let { userRepository.saveUnique(it) { throw ConflictException("error.user.conflict", args = listOf(it.email)) } }
+            .let { userRepository.save(it) }
     }
 
     suspend fun delete(id: UUID) {
