@@ -2,10 +2,12 @@ package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.response.SearchResponse
 import com.uniplat.uniplatapi.domain.enums.SearchType
+import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.Club
 import com.uniplat.uniplatapi.domain.model.Post
 import com.uniplat.uniplatapi.domain.model.University
 import com.uniplat.uniplatapi.domain.model.User
+import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.repository.ClubRepository
@@ -38,6 +40,7 @@ class SearchService(
 
     @OptIn(ObsoleteCoroutinesApi::class)
     suspend fun search(filters: List<SearchType>, text: String, pageable: Pageable): PaginatedResponse<SearchResponse> {
+        validateUserFilter(filters)
         val size = if (filters.isNotEmpty()) pageable.pageSize / filters.size else pageable.pageSize / 4
         var count: Long = 0
 
@@ -50,6 +53,16 @@ class SearchService(
                 withContext(newSingleThreadContext("SearchContext")) {
                     if (filterConditions[SearchType.USER] == true) {
                         searchUsers(text, pageable, size)
+                            .onEach { responseList.add(conversionService.convert(it)) }
+                            .launchIn(this)
+                    }
+                    if (filterConditions[SearchType.TEACHER] == true) {
+                        searchUsersByType(UserType.TEACHER, text, pageable, size)
+                            .onEach { responseList.add(conversionService.convert(it)) }
+                            .launchIn(this)
+                    }
+                    if (filterConditions[SearchType.STUDENT] == true) {
+                        searchUsersByType(UserType.STUDENT, text, pageable, size)
                             .onEach { responseList.add(conversionService.convert(it)) }
                             .launchIn(this)
                     }
@@ -70,16 +83,22 @@ class SearchService(
                     }
 
                     val countUser = async(start = CoroutineStart.LAZY) { countUsers(text) }
+                    val countTeacher = async(start = CoroutineStart.LAZY) { countUsersByType(UserType.TEACHER, text) }
+                    val countStudent = async(start = CoroutineStart.LAZY) { countUsersByType(UserType.STUDENT, text) }
                     val countUniversity = async(start = CoroutineStart.LAZY) { countUniversities(text) }
                     val countClub = async(start = CoroutineStart.LAZY) { countClubs(text) }
                     val countPost = async(start = CoroutineStart.LAZY) { countPosts(text) }
 
                     if (filterConditions[SearchType.USER] == true) countUser.start() else countUser.cancel()
+                    if (filterConditions[SearchType.TEACHER] == true) countTeacher.start() else countTeacher.cancel()
+                    if (filterConditions[SearchType.STUDENT] == true) countStudent.start() else countStudent.cancel()
                     if (filterConditions[SearchType.UNIVERSITY] == true) countUniversity.start() else countUniversity.cancel()
                     if (filterConditions[SearchType.CLUB] == true) countClub.start() else countClub.cancel()
                     if (filterConditions[SearchType.POST] == true) countPost.start() else countPost.cancel()
 
                     if (filterConditions[SearchType.USER] == true) count += countUser.await()
+                    if (filterConditions[SearchType.TEACHER] == true) count += countTeacher.await()
+                    if (filterConditions[SearchType.STUDENT] == true) count += countStudent.await()
                     if (filterConditions[SearchType.UNIVERSITY] == true) count += countUniversity.await()
                     if (filterConditions[SearchType.CLUB] == true) count += countClub.await()
                     if (filterConditions[SearchType.POST] == true) count += countPost.await()
@@ -126,6 +145,10 @@ class SearchService(
         return userRepository.findAllBy(text, pageable.offset, size)
     }
 
+    private fun searchUsersByType(type: UserType, text: String, pageable: Pageable, size: Int): Flow<User> {
+        return userRepository.findAllByType(type, text, pageable.offset, size)
+    }
+
     private fun searchUniversities(text: String, pageable: Pageable, size: Int): Flow<University> {
         return universityRepository.findAllBy(text, pageable.offset, size)
     }
@@ -140,9 +163,17 @@ class SearchService(
 
     private suspend fun countUsers(text: String): Long = userRepository.count(text)
 
+    private suspend fun countUsersByType(type: UserType, text: String): Long = userRepository.countByType(type, text)
+
     private suspend fun countUniversities(text: String): Long = universityRepository.count(text)
 
     private suspend fun countClubs(text: String): Long = clubRepository.count(text)
 
     private suspend fun countPosts(text: String): Long = postRepository.count(text)
+
+    private suspend fun validateUserFilter(filters: List<SearchType>) {
+        if (filters.contains(SearchType.USER)) {
+            if (filters.contains(SearchType.TEACHER) || filters.contains(SearchType.STUDENT)) throw BadRequestException("error.search.invalid")
+        }
+    }
 }

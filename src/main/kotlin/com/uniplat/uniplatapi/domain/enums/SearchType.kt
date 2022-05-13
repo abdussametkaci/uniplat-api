@@ -4,5 +4,7 @@ enum class SearchType {
     USER,
     UNIVERSITY,
     CLUB,
-    POST
+    POST,
+    TEACHER,
+    STUDENT
 }
