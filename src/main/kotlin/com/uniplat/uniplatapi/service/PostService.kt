@@ -136,16 +136,19 @@ class PostService(
     }
 
     private suspend fun validateLocation(latitude: BigDecimal?, longitude: BigDecimal?) {
-        if (latitude == null || longitude == null) throw BadRequestException("error.post.location-invalid")
-        else {
-            if (latitude < BigDecimal.valueOf(-90) || latitude > BigDecimal.valueOf(90)) throw BadRequestException(
-                "error.post.latitude-invalid",
-                args = listOf(latitude)
-            )
-            if (longitude < BigDecimal.valueOf(-180) || longitude > BigDecimal.valueOf(180)) throw BadRequestException(
-                "error.post.longitude-invalid",
-                args = listOf(longitude)
-            )
+        if (latitude != null || longitude != null) {
+            if (latitude == null || longitude == null) throw BadRequestException("error.post.location-invalid")
+            else {
+                if (latitude < BigDecimal.valueOf(-90) || latitude > BigDecimal.valueOf(90)) throw BadRequestException(
+                    "error.post.latitude-invalid",
+                    args = listOf(latitude)
+                )
+                if (longitude < BigDecimal.valueOf(-180) || longitude > BigDecimal.valueOf(180)) throw BadRequestException(
+                    "error.post.longitude-invalid",
+                    args = listOf(longitude)
+                )
+            }
         }
+
     }
 }
