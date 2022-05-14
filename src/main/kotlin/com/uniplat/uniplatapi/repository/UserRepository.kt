@@ -28,12 +28,33 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         """
         SELECT *
         FROM "user"
+        WHERE full_text @@ to_tsquery('simple', :text || ':*')
+        OFFSET :offset LIMIT :limit
+        """
+    )
+    fun findAllByNonWord(text: String, offset: Long, limit: Int): Flow<User>
+
+    @Query(
+        """
+        SELECT *
+        FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text)
         AND type = :type
         OFFSET :offset LIMIT :limit
         """
     )
     fun findAllByType(type: UserType, text: String, offset: Long, limit: Int): Flow<User>
+
+    @Query(
+        """
+        SELECT *
+        FROM "user"
+        WHERE full_text @@ to_tsquery('simple', :text || ':*')
+        AND type = :type
+        OFFSET :offset LIMIT :limit
+        """
+    )
+    fun findAllByTypeNonWord(type: UserType, text: String, offset: Long, limit: Int): Flow<User>
 
     @Query(
         """
@@ -48,9 +69,28 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         """
         SELECT count(*)
         FROM "user"
+        WHERE full_text @@ to_tsquery('simple', :text || ':*')
+        """
+    )
+    suspend fun countNonWord(text: String): Long
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text)
         AND type = :type
         """
     )
     suspend fun countByType(type: UserType, text: String): Long
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM "user"
+        WHERE full_text @@ to_tsquery('simple', :text || ':*')
+        AND type = :type
+        """
+    )
+    suspend fun countByTypeNonWord(type: UserType, text: String): Long
 }
