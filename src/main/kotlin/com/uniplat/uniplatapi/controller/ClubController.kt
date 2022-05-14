@@ -59,9 +59,11 @@ class ClubController(
     }
 
     @PutMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateClubRequest): ClubResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(clubService.update(id, request))
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateClubRequest): ClubDTOResponse {
+        return withUserId { userId ->
+            validator.withValidateSuspend(request) {
+                conversionService.convert(clubService.update(id, request, userId))
+            }
         }
     }
 

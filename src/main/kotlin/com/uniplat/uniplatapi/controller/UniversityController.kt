@@ -59,9 +59,11 @@ class UniversityController(
     }
 
     @PutMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUniversityRequest): UniversityResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(universityService.update(id, request))
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUniversityRequest): UniversityDTOResponse {
+        return withUserId { userId ->
+            validator.withValidateSuspend(request) {
+                conversionService.convert(universityService.update(id, request, userId))
+            }
         }
     }
 

@@ -55,9 +55,11 @@ class UserController(
     }
 
     @PutMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserRequest): UserResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(userService.update(id, request))
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserRequest): UserDTOResponse {
+        return withUserId { userId ->
+            validator.withValidateSuspend(request) {
+                conversionService.convert(userService.update(id, request, userId))
+            }
         }
     }
 

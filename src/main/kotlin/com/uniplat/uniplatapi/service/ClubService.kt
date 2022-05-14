@@ -80,6 +80,21 @@ class ClubService(
             .let { clubRepository.saveUnique(it) { throw ConflictException("error.club.conflict", args = listOf(it.name, it.universityId)) } }
     }
 
+    suspend fun update(id: UUID, request: UpdateClubRequest, userId: UUID): ClubDTO {
+        return getById(id)
+            .apply {
+                with(request) {
+                    this@apply.name = name
+                    this@apply.description = description
+                    this@apply.profileImgId = profileImgId
+                    this@apply.adminId = adminId
+                    this@apply.version = version
+                }
+            }
+            .let { clubRepository.saveUnique(it) { throw ConflictException("error.club.conflict", args = listOf(it.name, it.universityId)) } }
+            .let { getById(id, userId) }
+    }
+
     suspend fun delete(id: UUID) {
         clubRepository.deleteById(id)
     }

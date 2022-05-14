@@ -75,6 +75,25 @@ class UserService(
         }
     }
 
+    suspend fun update(id: UUID, request: UpdateUserRequest, userId: UUID): UserDTO {
+        return getById(id)
+            .apply {
+                with(request) {
+                    this@apply.name = name
+                    this@apply.surname = surname
+                    this@apply.gender = gender
+                    this@apply.birthDate = birthDate
+                    this@apply.universityId = universityId
+                    this@apply.description = description
+                    this@apply.profileImgId = profileImgId
+                    this@apply.messageAccessed = messageAccessed
+                    this@apply.version = version
+                }
+            }
+            .let { userRepository.save(it) }
+            .let { getById(id, userId) }
+    }
+
     suspend fun update(id: UUID, request: UpdateUserRequest): User {
         return getById(id)
             .apply {
