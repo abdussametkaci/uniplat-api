@@ -98,3 +98,13 @@ suspend fun <T> withUserId(block: suspend (UUID) -> T): T {
     return if (userId != null) block(UUID.fromString(userId))
     else throw BadRequestException("error.*.userId-empty")
 }
+
+suspend fun <T> withUserIdOrNull(block: suspend (UUID?) -> T): T {
+    val userId =
+        ReactiveRequestContextHolder.request
+            .mapNotNull { request: ServerHttpRequest ->
+                request.headers.getFirst("userId")
+            }.awaitFirstOrNull()
+
+    return block(userId?.let { UUID.fromString(userId) })
+}

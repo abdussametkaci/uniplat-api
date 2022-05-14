@@ -14,14 +14,19 @@ import java.util.UUID
 @Repository
 class UniversityDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
 
-    fun findAllBy(userId: UUID, adminId: UUID?, offset: Long, limit: Int): Flow<UniversityDTO> {
+    fun findAllBy(userId: UUID?, adminId: UUID?, offset: Long, limit: Int): Flow<UniversityDTO> {
         val query = """
             SELECT *,
-                   exists(
+                   (CASE WHEN :userId IS NOT NULL THEN (
+                       exists(
                            SELECT *
                            FROM user_follow
                            WHERE user_id = :userId AND follow_type = 'UNIVERSITY' AND follow_id = university.id
-                       ) AS followed_by_user,
+                           )
+                       )
+                       ELSE FALSE
+                       END
+                   ) AS followed_by_user,
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'UNIVERSITY' AND follow_id = university.id) AS count_follower,
                    (SELECT count(*) FROM club WHERE university_id = university.id) AS count_club
             FROM university

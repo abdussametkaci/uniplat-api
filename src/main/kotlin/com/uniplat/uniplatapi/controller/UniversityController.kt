@@ -7,6 +7,7 @@ import com.uniplat.uniplatapi.domain.dto.response.UniversityResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.extensions.withUserId
+import com.uniplat.uniplatapi.extensions.withUserIdOrNull
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UniversityService
@@ -38,7 +39,7 @@ class UniversityController(
         @RequestParam adminId: UUID?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<UniversityDTOResponse> {
-        return withUserId { userId ->
+        return withUserIdOrNull { userId ->
             universityService.getAll(userId, adminId, pageable).convertWith(conversionService)
         }
     }

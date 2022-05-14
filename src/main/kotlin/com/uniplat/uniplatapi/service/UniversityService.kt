@@ -35,7 +35,7 @@ class UniversityService(
         )
     }
 
-    suspend fun getAll(userId: UUID, adminId: UUID?, pageable: Pageable): PaginatedModel<UniversityDTO> {
+    suspend fun getAll(userId: UUID?, adminId: UUID?, pageable: Pageable): PaginatedModel<UniversityDTO> {
         val count = universityRepository.count(adminId)
         val universities = universityDTORepository.findAllBy(userId, adminId, pageable.offset, pageable.pageSize)
 
