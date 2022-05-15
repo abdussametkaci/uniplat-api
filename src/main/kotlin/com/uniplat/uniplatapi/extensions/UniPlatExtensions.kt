@@ -10,6 +10,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import org.slf4j.LoggerFactory
 import org.springframework.core.convert.ConversionService
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.r2dbc.convert.EnumWriteSupport
@@ -108,3 +109,5 @@ suspend fun <T> withUserIdOrNull(block: suspend (UUID?) -> T): T {
 
     return block(userId?.let { UUID.fromString(userId) })
 }
+
+fun <T : Any> T.logger() = lazy { LoggerFactory.getLogger(javaClass) }

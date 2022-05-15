@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.uniplat.uniplatapi.exception.BaseResponseStatusException
 import com.uniplat.uniplatapi.exception.ErrorResponse
 import com.uniplat.uniplatapi.exception.SubError
-import org.slf4j.LoggerFactory
+import com.uniplat.uniplatapi.extensions.logger
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
@@ -23,7 +23,7 @@ class UniPlatErrorWebExceptionHandler(
     private val messageSource: MessageSource
 ) : ErrorWebExceptionHandler {
 
-    private val logger = LoggerFactory.getLogger(UniPlatErrorWebExceptionHandler::class.java)
+    private val logger by logger()
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         val dataBufferFactory = exchange.response.bufferFactory()
