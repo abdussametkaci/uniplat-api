@@ -142,34 +142,34 @@ class SearchService(
     }
 
     private fun searchUsers(text: String, pageable: Pageable, size: Int): Flow<User> {
-        return userRepository.findAllByNonWord(text, pageable.offset, size)
+        return userRepository.findAllByStartWith(text, pageable.offset, size)
     }
 
     private fun searchUsersByType(type: UserType, text: String, pageable: Pageable, size: Int): Flow<User> {
-        return userRepository.findAllByTypeNonWord(type, text, pageable.offset, size)
+        return userRepository.findAllByTypeStartWith(type, text, pageable.offset, size)
     }
 
     private fun searchUniversities(text: String, pageable: Pageable, size: Int): Flow<University> {
-        return universityRepository.findAllByNonWord(text, pageable.offset, size)
+        return universityRepository.findAllByStartWith(text, pageable.offset, size)
     }
 
     private fun searchClubs(text: String, pageable: Pageable, size: Int): Flow<Club> {
-        return clubRepository.findAllByNonWord(text, pageable.offset, size)
+        return clubRepository.findAllByStartWith(text, pageable.offset, size)
     }
 
     private fun searchPosts(text: String, pageable: Pageable, size: Int): Flow<Post> {
-        return postRepository.findAllByNonWord(text, pageable.offset, size)
+        return postRepository.findAllByStartWith(text, pageable.offset, size)
     }
 
-    private suspend fun countUsers(text: String): Long = userRepository.countNonWord(text)
+    private suspend fun countUsers(text: String): Long = userRepository.countByStartWith(text)
 
-    private suspend fun countUsersByType(type: UserType, text: String): Long = userRepository.countByTypeNonWord(type, text)
+    private suspend fun countUsersByType(type: UserType, text: String): Long = userRepository.countByTypeStartWith(type, text)
 
-    private suspend fun countUniversities(text: String): Long = universityRepository.countByNonWord(text)
+    private suspend fun countUniversities(text: String): Long = universityRepository.countByStartWith(text)
 
-    private suspend fun countClubs(text: String): Long = clubRepository.countByNonWord(text)
+    private suspend fun countClubs(text: String): Long = clubRepository.countByStartWith(text)
 
-    private suspend fun countPosts(text: String): Long = postRepository.countByNonWord(text)
+    private suspend fun countPosts(text: String): Long = postRepository.countByStartWith(text)
 
     private suspend fun validateUserFilter(filters: List<SearchType>) {
         if (filters.contains(SearchType.USER)) {

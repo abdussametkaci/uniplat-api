@@ -80,7 +80,7 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllByNonWord(text: String, offset: Long, limit: Int): Flow<Post>
+    fun findAllByStartWith(text: String, offset: Long, limit: Int): Flow<Post>
 
     @Query(
         """
@@ -98,7 +98,7 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
         """
     )
-    suspend fun countByNonWord(text: String): Long
+    suspend fun countByStartWith(text: String): Long
 
     @Query(
         """

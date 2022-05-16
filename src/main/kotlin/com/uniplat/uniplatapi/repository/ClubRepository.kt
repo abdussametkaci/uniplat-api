@@ -48,7 +48,7 @@ interface ClubRepository : CoroutineCrudRepository<Club, UUID> {
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllByNonWord(text: String, offset: Long, limit: Int): Flow<Club>
+    fun findAllByStartWith(text: String, offset: Long, limit: Int): Flow<Club>
 
     @Query(
         """
@@ -66,7 +66,7 @@ interface ClubRepository : CoroutineCrudRepository<Club, UUID> {
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
         """
     )
-    suspend fun countByNonWord(text: String): Long
+    suspend fun countByStartWith(text: String): Long
 
     @Query(
         """

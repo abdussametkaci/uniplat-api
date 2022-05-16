@@ -32,7 +32,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllByNonWord(text: String, offset: Long, limit: Int): Flow<User>
+    fun findAllByStartWith(text: String, offset: Long, limit: Int): Flow<User>
 
     @Query(
         """
@@ -54,7 +54,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllByTypeNonWord(type: UserType, text: String, offset: Long, limit: Int): Flow<User>
+    fun findAllByTypeStartWith(type: UserType, text: String, offset: Long, limit: Int): Flow<User>
 
     @Query(
         """
@@ -72,7 +72,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
         """
     )
-    suspend fun countNonWord(text: String): Long
+    suspend fun countByStartWith(text: String): Long
 
     @Query(
         """
@@ -92,7 +92,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         AND type = :type
         """
     )
-    suspend fun countByTypeNonWord(type: UserType, text: String): Long
+    suspend fun countByTypeStartWith(type: UserType, text: String): Long
 
     @Query(
         """

@@ -29,7 +29,7 @@ interface UniversityRepository : CoroutineCrudRepository<University, UUID> {
         OFFSET :offset LIMIT :limit
         """
     )
-    fun findAllByNonWord(text: String, offset: Long, limit: Int): Flow<University>
+    fun findAllByStartWith(text: String, offset: Long, limit: Int): Flow<University>
 
     @Query(
         """
@@ -47,7 +47,7 @@ interface UniversityRepository : CoroutineCrudRepository<University, UUID> {
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
         """
     )
-    suspend fun countByNonWord(text: String): Long
+    suspend fun countByStartWith(text: String): Long
 
     @Query(
         """
