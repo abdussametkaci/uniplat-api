@@ -38,4 +38,12 @@ class PostCommentService(private val postCommentRepository: PostCommentRepositor
     suspend fun delete(id: UUID) {
         postCommentRepository.deleteById(id)
     }
+
+    suspend fun deleteAllByUserId(userId: UUID) {
+        postCommentRepository.deleteAllByUserId(userId)
+    }
+
+    suspend fun deleteAllByPostId(postId: UUID) {
+        postCommentRepository.deleteAllByPostId(postId)
+    }
 }

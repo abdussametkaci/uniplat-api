@@ -29,4 +29,8 @@ interface PostCommentRepository : CoroutineCrudRepository<PostComment, UUID> {
         """
     )
     fun findAllBy(userId: UUID?, postId: UUID?, offset: Long, limit: Int): Flow<PostComment>
+
+    suspend fun deleteAllByPostId(postId: UUID)
+
+    suspend fun deleteAllByUserId(userId: UUID)
 }

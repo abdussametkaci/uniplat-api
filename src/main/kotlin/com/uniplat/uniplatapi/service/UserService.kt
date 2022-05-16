@@ -3,6 +3,7 @@ package com.uniplat.uniplatapi.service
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserPasswordRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.domain.model.UserDTO
@@ -13,6 +14,10 @@ import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserDTORepository
 import com.uniplat.uniplatapi.repository.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -20,7 +25,14 @@ import java.util.UUID
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val userDTORepository: UserDTORepository
+    private val userDTORepository: UserDTORepository,
+    private val postService: PostService,
+    private val userLikedPostService: UserLikedPostService,
+    private val userFollowService: UserFollowService,
+    private val postCommentService: PostCommentService,
+    private val fileService: FileService,
+    private val activityParticipantService: ActivityParticipantService,
+    private val applicationScope: CoroutineScope
 ) {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<User> {
@@ -125,7 +137,19 @@ class UserService(
     }
 
     suspend fun delete(id: UUID) {
-        userRepository.deleteById(id)
+        userRepository.deleteAndReturnById(id)?.let { user ->
+            postService.deleteAndReturnAllByOwnerIdAndOwnerType(id, OwnerType.USER)
+                .onEach { post -> post.imgId?.let { imgId -> fileService.delete(imgId) } }
+                .launchIn(applicationScope)
+
+            applicationScope.launch {
+                launch { user.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
+                launch { userLikedPostService.deleteAllByUserId(id) }
+                launch { userFollowService.deleteAllByUserId(id) }
+                launch { postCommentService.deleteAllByUserId(id) }
+                launch { activityParticipantService.deleteAllByUserId(id) }
+            }
+        }
     }
 
     private suspend fun validate(user: User, request: UpdateUserPasswordRequest) {

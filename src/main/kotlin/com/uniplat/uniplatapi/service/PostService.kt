@@ -11,6 +11,7 @@ import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.PostDTORepository
 import com.uniplat.uniplatapi.repository.PostRepository
+import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -20,7 +21,8 @@ import java.util.UUID
 @Service
 class PostService(
     private val postRepository: PostRepository,
-    private val postDTORepository: PostDTORepository
+    private val postDTORepository: PostDTORepository,
+    private val postCommentService: PostCommentService
 ) {
 
     suspend fun getAll(ownerId: UUID?, ownerType: OwnerType?, postType: PostType?, pageable: Pageable): PaginatedModel<Post> {
@@ -92,7 +94,13 @@ class PostService(
     }
 
     suspend fun delete(id: UUID) {
-        postRepository.deleteById(id)
+        postRepository.deleteAndReturnById(id)?.let {
+            postCommentService.deleteAllByPostId(id)
+        }
+    }
+
+    fun deleteAndReturnAllByOwnerIdAndOwnerType(ownerId: UUID, ownerType: OwnerType): Flow<Post> {
+        return postRepository.deleteAndReturnAllByOwnerIdAndOwnerType(ownerId, ownerType)
     }
 
     suspend fun postFlowByUserId(userId: UUID, pageable: Pageable): PaginatedModel<PostDTO> {

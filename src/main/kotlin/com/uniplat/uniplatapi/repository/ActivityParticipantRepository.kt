@@ -29,4 +29,6 @@ interface ActivityParticipantRepository : CoroutineCrudRepository<ActivityPartic
         """
     )
     fun findAllBy(userId: UUID?, postId: UUID?, offset: Long, limit: Int): Flow<ActivityParticipant>
+
+    suspend fun deleteAllByUserId(userId: UUID)
 }

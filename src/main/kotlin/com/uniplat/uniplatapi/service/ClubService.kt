@@ -2,6 +2,7 @@ package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateClubRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateClubRequest
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.model.Club
 import com.uniplat.uniplatapi.domain.model.ClubDTO
 import com.uniplat.uniplatapi.exception.ConflictException
@@ -10,6 +11,10 @@ import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.ClubDTORepository
 import com.uniplat.uniplatapi.repository.ClubRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -17,7 +22,10 @@ import java.util.UUID
 @Service
 class ClubService(
     private val clubRepository: ClubRepository,
-    private val clubDTORepository: ClubDTORepository
+    private val clubDTORepository: ClubDTORepository,
+    private val postService: PostService,
+    private val fileService: FileService,
+    private val applicationScope: CoroutineScope
 ) {
 
     suspend fun getAll(universityId: UUID?, adminId: UUID?, pageable: Pageable): PaginatedModel<Club> {
@@ -96,6 +104,14 @@ class ClubService(
     }
 
     suspend fun delete(id: UUID) {
-        clubRepository.deleteById(id)
+        clubRepository.deleteAndReturnById(id)?.let { club ->
+            postService.deleteAndReturnAllByOwnerIdAndOwnerType(id, OwnerType.CLUB)
+                .onEach { post -> post.imgId?.let { imgId -> fileService.delete(imgId) } }
+                .launchIn(applicationScope)
+
+            applicationScope.launch {
+                launch { club.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
+            }
+        }
     }
 }

@@ -93,4 +93,13 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         """
     )
     suspend fun countByTypeNonWord(type: UserType, text: String): Long
+
+    @Query(
+        """
+        DELETE FROM "user"
+               WHERE id = :id
+               RETURNING *
+        """
+    )
+    suspend fun deleteAndReturnById(id: UUID): User?
 }

@@ -31,4 +31,6 @@ interface UserLikedPostRepository : CoroutineCrudRepository<UserLikedPost, UUID>
     fun findAllBy(userId: UUID?, postId: UUID?, offset: Long, limit: Int): Flow<UserLikedPost>
 
     suspend fun findByUserIdAndPostId(userId: UUID, postId: UUID): UserLikedPost?
+
+    suspend fun deleteAllByUserId(userId: UUID)
 }

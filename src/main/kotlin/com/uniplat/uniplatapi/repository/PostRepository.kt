@@ -99,4 +99,22 @@ interface PostRepository : CoroutineCrudRepository<Post, UUID> {
         """
     )
     suspend fun countByNonWord(text: String): Long
+
+    @Query(
+        """
+        DELETE FROM post
+               WHERE owner_id = :ownerId AND owner_type = :ownerType
+               RETURNING *
+        """
+    )
+    fun deleteAndReturnAllByOwnerIdAndOwnerType(ownerId: UUID, ownerType: OwnerType): Flow<Post>
+
+    @Query(
+        """
+        DELETE FROM post
+               WHERE id = :id
+               RETURNING *
+        """
+    )
+    suspend fun deleteAndReturnById(id: UUID): Post?
 }

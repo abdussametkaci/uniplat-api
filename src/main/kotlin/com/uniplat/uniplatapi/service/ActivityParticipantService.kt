@@ -53,6 +53,10 @@ class ActivityParticipantService(
         activityParticipantRepository.deleteById(id)
     }
 
+    suspend fun deleteAllByUserId(userId: UUID) {
+        activityParticipantRepository.deleteAllByUserId(userId)
+    }
+
     private suspend fun validate(postId: UUID) {
         val post = postService.getById(postId)
         if (post.postType != PostType.ACTIVITY) {

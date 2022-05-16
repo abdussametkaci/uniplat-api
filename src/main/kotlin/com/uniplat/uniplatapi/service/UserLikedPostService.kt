@@ -53,4 +53,8 @@ class UserLikedPostService(private val userLikedPostRepository: UserLikedPostRep
     suspend fun delete(id: UUID) {
         userLikedPostRepository.deleteById(id)
     }
+
+    suspend fun deleteAllByUserId(userId: UUID) {
+        userLikedPostRepository.deleteAllByUserId(userId)
+    }
 }

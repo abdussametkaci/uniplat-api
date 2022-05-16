@@ -57,4 +57,13 @@ interface UniversityRepository : CoroutineCrudRepository<University, UUID> {
         """
     )
     suspend fun count(adminId: UUID?): Long
+
+    @Query(
+        """
+        DELETE FROM university
+               WHERE id = :id
+               RETURNING *
+        """
+    )
+    suspend fun deleteAndReturnById(id: UUID): University?
 }

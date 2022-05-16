@@ -67,4 +67,13 @@ interface ClubRepository : CoroutineCrudRepository<Club, UUID> {
         """
     )
     suspend fun countByNonWord(text: String): Long
+
+    @Query(
+        """
+        DELETE FROM club
+               WHERE id = :id
+               RETURNING *
+        """
+    )
+    suspend fun deleteAndReturnById(id: UUID): Club?
 }

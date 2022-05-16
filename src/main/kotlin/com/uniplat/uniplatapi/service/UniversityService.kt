@@ -2,6 +2,7 @@ package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityRequest
+import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.University
 import com.uniplat.uniplatapi.domain.model.UniversityDTO
@@ -12,6 +13,10 @@ import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UniversityDTORepository
 import com.uniplat.uniplatapi.repository.UniversityRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -20,7 +25,10 @@ import java.util.UUID
 class UniversityService(
     private val universityRepository: UniversityRepository,
     private val universityDTORepository: UniversityDTORepository,
-    private val userService: UserService
+    private val userService: UserService,
+    private val postService: PostService,
+    private val fileService: FileService,
+    private val applicationScope: CoroutineScope
 ) {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<University> {
@@ -104,7 +112,15 @@ class UniversityService(
     }
 
     suspend fun delete(id: UUID) {
-        universityRepository.deleteById(id)
+        universityRepository.deleteAndReturnById(id)?.let { university ->
+            postService.deleteAndReturnAllByOwnerIdAndOwnerType(id, OwnerType.UNIVERSITY)
+                .onEach { post -> post.imgId?.let { imgId -> fileService.delete(imgId) } }
+                .launchIn(applicationScope)
+
+            applicationScope.launch {
+                launch { university.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
+            }
+        }
     }
 
     private suspend fun validateAdmin(id: UUID) {

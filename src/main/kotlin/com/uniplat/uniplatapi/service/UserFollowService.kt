@@ -41,4 +41,8 @@ class UserFollowService(private val userFollowRepository: UserFollowRepository) 
     suspend fun delete(id: UUID) {
         userFollowRepository.deleteById(id)
     }
+
+    suspend fun deleteAllByUserId(userId: UUID) {
+        userFollowRepository.deleteAllByUserId(userId)
+    }
 }
