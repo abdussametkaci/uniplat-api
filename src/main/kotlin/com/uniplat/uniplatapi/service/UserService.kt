@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -136,6 +137,7 @@ class UserService(
             .let { userRepository.save(it) }
     }
 
+    @Transactional
     suspend fun delete(id: UUID) {
         userRepository.deleteAndReturnById(id)?.let { user ->
             postService.deleteAndReturnAllByOwnerIdAndOwnerType(id, OwnerType.USER)

@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -111,6 +112,7 @@ class UniversityService(
             .let { universityRepository.saveUnique(it) { throw ConflictException("error.university.conflict", args = listOf(it.name)) } }
     }
 
+    @Transactional
     suspend fun delete(id: UUID) {
         universityRepository.deleteAndReturnById(id)?.let { university ->
             postService.deleteAndReturnAllByOwnerIdAndOwnerType(id, OwnerType.UNIVERSITY)

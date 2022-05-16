@@ -11,9 +11,12 @@ import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.PostDTORepository
 import com.uniplat.uniplatapi.repository.PostRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -22,7 +25,9 @@ import java.util.UUID
 class PostService(
     private val postRepository: PostRepository,
     private val postDTORepository: PostDTORepository,
-    private val postCommentService: PostCommentService
+    private val postCommentService: PostCommentService,
+    private val activityParticipantService: ActivityParticipantService,
+    private val applicationScope: CoroutineScope
 ) {
 
     suspend fun getAll(ownerId: UUID?, ownerType: OwnerType?, postType: PostType?, pageable: Pageable): PaginatedModel<Post> {
@@ -93,9 +98,15 @@ class PostService(
         }
     }
 
+    @Transactional
     suspend fun delete(id: UUID) {
-        postRepository.deleteAndReturnById(id)?.let {
-            postCommentService.deleteAllByPostId(id)
+        postRepository.deleteAndReturnById(id)?.let { post ->
+            applicationScope.launch {
+                launch { postCommentService.deleteAllByPostId(id) }
+                if (post.postType == PostType.ACTIVITY) {
+                    launch { activityParticipantService.deleteAllByPostId(id) }
+                }
+            }
         }
     }
 
