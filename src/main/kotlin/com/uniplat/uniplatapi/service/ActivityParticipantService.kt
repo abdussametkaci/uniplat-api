@@ -8,6 +8,7 @@ import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.ActivityParticipantRepository
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -16,7 +17,7 @@ import java.util.UUID
 @Service
 class ActivityParticipantService(
     private val activityParticipantRepository: ActivityParticipantRepository,
-    private val postService: PostService
+    @Lazy private val postService: PostService
 ) {
 
     suspend fun getAll(userId: UUID?, postId: UUID?, pageable: Pageable): PaginatedModel<ActivityParticipant> {
