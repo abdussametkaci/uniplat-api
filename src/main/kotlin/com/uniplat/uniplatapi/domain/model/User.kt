@@ -24,6 +24,7 @@ data class User(
     var description: String? = null,
     var profileImgId: UUID? = null,
     var messageAccessed: Boolean = true,
+    var enabled: Boolean = false,
     @Version var version: Int? = null,
     @CreatedDate var createdAt: Instant? = null,
     @LastModifiedDate var lastModifiedAt: Instant? = null

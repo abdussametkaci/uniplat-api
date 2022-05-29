@@ -14,6 +14,7 @@ import com.uniplat.uniplatapi.service.UserService
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -48,9 +49,9 @@ class UserController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUserRequest): UserResponse {
+    suspend fun create(@RequestBody request: CreateUserRequest, serverHttpRequest: ServerHttpRequest): UserResponse {
         return validator.withValidateSuspend(request) {
-            conversionService.convert(userService.create(request))
+            conversionService.convert(userService.create(request, getURL(serverHttpRequest)))
         }
     }
 
@@ -73,5 +74,10 @@ class UserController(
     @DeleteMapping("/{id}")
     suspend fun delete(@PathVariable id: UUID) {
         userService.delete(id)
+    }
+
+    private suspend fun getURL(serverHttpRequest: ServerHttpRequest): String {
+        val uri = serverHttpRequest.uri
+        return """${uri.scheme}://${uri.host}:${uri.port}"""
     }
 }

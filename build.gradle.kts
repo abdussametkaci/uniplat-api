@@ -30,6 +30,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    // Email
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+
     // Spring Boot Documentation
     implementation("org.springdoc:springdoc-openapi-kotlin:1.6.8")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.8")

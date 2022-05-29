@@ -8,6 +8,17 @@ spring:
     deserialization:
       FAIL_ON_NULL_FOR_PRIMITIVES: true
       ACCEPT_FLOAT_AS_INT: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: uniplat1010@gmail.com
+    password: Bitirme.123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 database:
   host: ${DATABASE_HOST:localhost}

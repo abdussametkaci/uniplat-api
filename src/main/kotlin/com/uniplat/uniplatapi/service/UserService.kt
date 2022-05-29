@@ -33,6 +33,7 @@ class UserService(
     private val postCommentService: PostCommentService,
     private val fileService: FileService,
     private val activityParticipantService: ActivityParticipantService,
+    private val emailVerificationCodeService: EmailVerificationCodeService,
     private val applicationScope: CoroutineScope
 ) {
 
@@ -68,7 +69,8 @@ class UserService(
         return userRepository.findById(id) ?: throw NotFoundException("error.user.not-found", args = listOf(id))
     }
 
-    suspend fun create(request: CreateUserRequest): User {
+    @Transactional
+    suspend fun create(request: CreateUserRequest, url: String): User {
         with(request) {
             val user = User(
                 name = name,
@@ -84,7 +86,11 @@ class UserService(
                 messageAccessed = messageAccessed
             )
 
-            return userRepository.saveUnique(user) { throw ConflictException("error.user.conflict", args = listOf(email)) }
+            val savedUser = userRepository.saveUnique(user) { throw ConflictException("error.user.conflict", args = listOf(email)) }
+
+            emailVerificationCodeService.saveAndSendVerificationEmail(savedUser, url)
+
+            return savedUser
         }
     }
 
