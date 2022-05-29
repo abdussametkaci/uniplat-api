@@ -69,6 +69,10 @@ class UserService(
         return userRepository.findById(id) ?: throw NotFoundException("error.user.not-found", args = listOf(id))
     }
 
+    suspend fun save(user: User): User {
+        return userRepository.save(user)
+    }
+
     @Transactional
     suspend fun create(request: CreateUserRequest, url: String): User {
         with(request) {
