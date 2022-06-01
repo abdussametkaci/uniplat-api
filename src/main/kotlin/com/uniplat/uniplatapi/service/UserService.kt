@@ -92,7 +92,9 @@ class UserService(
 
             val savedUser = userRepository.saveUnique(user) { throw ConflictException("error.user.conflict", args = listOf(email)) }
 
-            emailVerificationCodeService.saveAndSendVerificationEmail(savedUser, url)
+            applicationScope.launch {
+                emailVerificationCodeService.saveAndSendVerificationEmail(savedUser, url)
+            }
 
             return savedUser
         }
