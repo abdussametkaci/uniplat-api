@@ -7,6 +7,7 @@ import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.repository.EmailVerificationCodeRepository
 import org.apache.commons.lang3.RandomStringUtils
+import org.springframework.context.annotation.Lazy
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -16,7 +17,7 @@ import javax.mail.internet.MimeMessage
 @Service
 class EmailVerificationCodeService(
     private val emailVerificationCodeRepository: EmailVerificationCodeRepository,
-    private val userService: UserService,
+    @Lazy private val userService: UserService,
     private val javaMailSender: JavaMailSender,
     private val emailProperties: EmailProperties
 ) {
