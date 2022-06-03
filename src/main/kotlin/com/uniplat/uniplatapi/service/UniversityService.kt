@@ -29,6 +29,7 @@ class UniversityService(
     private val userService: UserService,
     private val postService: PostService,
     private val fileService: FileService,
+    private val userFollowService: UserFollowService,
     private val applicationScope: CoroutineScope
 ) {
 
@@ -121,6 +122,7 @@ class UniversityService(
 
             applicationScope.launch {
                 launch { university.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
+                launch { userFollowService.deleteAllByFollowIdAndFollowType(id, OwnerType.USER) }
             }
         }
     }

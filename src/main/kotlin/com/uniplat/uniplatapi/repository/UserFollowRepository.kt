@@ -32,4 +32,6 @@ interface UserFollowRepository : CoroutineCrudRepository<UserFollow, UUID> {
     fun findAllBy(userId: UUID?, followType: OwnerType?, followId: UUID?, offset: Long, limit: Int): Flow<UserFollow>
 
     suspend fun deleteAllByUserId(userId: UUID)
+
+    suspend fun deleteAllByFollowIdAndFollowType(followId: UUID, followType: OwnerType)
 }

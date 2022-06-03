@@ -26,6 +26,7 @@ class ClubService(
     private val clubDTORepository: ClubDTORepository,
     private val postService: PostService,
     private val fileService: FileService,
+    private val userFollowService: UserFollowService,
     private val applicationScope: CoroutineScope
 ) {
 
@@ -113,6 +114,7 @@ class ClubService(
 
             applicationScope.launch {
                 launch { club.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
+                launch { userFollowService.deleteAllByFollowIdAndFollowType(id, OwnerType.USER) }
             }
         }
     }

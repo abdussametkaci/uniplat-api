@@ -160,6 +160,7 @@ class UserService(
                 launch { user.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
                 launch { userLikedPostService.deleteAllByUserId(id) }
                 launch { userFollowService.deleteAllByUserId(id) }
+                launch { userFollowService.deleteAllByFollowIdAndFollowType(id, OwnerType.USER) }
                 launch { postCommentService.deleteAllByUserId(id) }
                 launch { activityParticipantService.deleteAllByUserId(id) }
             }
