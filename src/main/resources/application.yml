@@ -9,10 +9,10 @@ spring:
       FAIL_ON_NULL_FOR_PRIMITIVES: true
       ACCEPT_FLOAT_AS_INT: false
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: uniplat1010@gmail.com
-    password: password123
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_POST:587}
+    username: ${MAIL_USERNAME:uniplat1010@gmail.com}
+    password: ${MAIL_PASSWORD:password123}
     properties:
       mail:
         smtp:
