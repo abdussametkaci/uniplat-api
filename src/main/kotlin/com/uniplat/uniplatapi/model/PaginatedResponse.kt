@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.model
 
-class PaginatedResponse<T>(
+data class PaginatedResponse<T>(
     private val number: Int,
     private val size: Int,
     private val totalElements: Long,
