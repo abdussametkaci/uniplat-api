@@ -19,6 +19,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         SELECT *
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text)
+        AND enabled = TRUE
         OFFSET :offset LIMIT :limit
         """
     )
@@ -28,7 +29,8 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         """
         SELECT *
         FROM "user"
-        WHERE full_text @@ to_tsquery('simple', :text || ':*')
+        WHERE full_text @@ to_tsquery('simple', :text || ':*') 
+        AND enabled = TRUE
         OFFSET :offset LIMIT :limit
         """
     )
@@ -40,6 +42,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text)
         AND type = :type
+        AND enabled = TRUE
         OFFSET :offset LIMIT :limit
         """
     )
@@ -51,6 +54,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
         AND type = :type
+        AND enabled = TRUE
         OFFSET :offset LIMIT :limit
         """
     )
@@ -61,6 +65,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         SELECT count(*)
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text)
+        AND enabled = TRUE
         """
     )
     suspend fun count(text: String): Long
@@ -70,6 +75,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         SELECT count(*)
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
+        AND enabled = TRUE
         """
     )
     suspend fun countByStartWith(text: String): Long
@@ -80,6 +86,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text)
         AND type = :type
+        AND enabled = TRUE
         """
     )
     suspend fun countByType(type: UserType, text: String): Long
@@ -90,6 +97,7 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         FROM "user"
         WHERE full_text @@ to_tsquery('simple', :text || ':*')
         AND type = :type
+        AND enabled = TRUE
         """
     )
     suspend fun countByTypeStartWith(type: UserType, text: String): Long
