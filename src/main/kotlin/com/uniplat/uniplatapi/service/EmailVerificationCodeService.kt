@@ -24,6 +24,7 @@ class EmailVerificationCodeService(
 
     suspend fun verifyUser(code: String): String {
         emailVerificationCodeRepository.findByCode(code)
+            ?.also { emailVerificationCodeRepository.deleteById(it.id!!) }
             ?.let { emailVerificationCode ->
                 userService.getById(emailVerificationCode.userId)
                     .also { validate(it.id!!, emailVerificationCode.userId) }
