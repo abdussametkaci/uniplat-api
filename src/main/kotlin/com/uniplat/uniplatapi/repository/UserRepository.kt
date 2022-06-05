@@ -102,4 +102,6 @@ interface UserRepository : CoroutineCrudRepository<User, UUID> {
         """
     )
     suspend fun deleteAndReturnById(id: UUID): User?
+
+    suspend fun countByEnabledIsTrue(): Long
 }

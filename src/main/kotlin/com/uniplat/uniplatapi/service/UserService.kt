@@ -50,7 +50,7 @@ class UserService(
     }
 
     suspend fun getAll(userId: UUID, pageable: Pageable): PaginatedModel<UserDTO> {
-        val count = userRepository.count()
+        val count = userRepository.countByEnabledIsTrue()
         val users = userDTORepository.findAllBy(userId, pageable.offset, pageable.pageSize)
 
         return PaginatedModel(

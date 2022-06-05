@@ -26,6 +26,7 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower,
                    (SELECT count(*) FROM user_follow WHERE user_id = u.id) AS count_follow
             FROM "user" u
+            WHERE enabled = TRUE
             OFFSET :offset LIMIT :limit
         """.trimIndent()
 
@@ -50,7 +51,7 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
                    (SELECT count(*) FROM user_follow WHERE follow_type = 'USER' AND follow_id = u.id) AS count_follower,
                    (SELECT count(*) FROM user_follow WHERE user_id = u.id) AS count_follow
             FROM "user" u
-            WHERE id = :id
+            WHERE id = :id AND enabled = TRUE
         """.trimIndent()
 
         return databaseTemplate.databaseClient
