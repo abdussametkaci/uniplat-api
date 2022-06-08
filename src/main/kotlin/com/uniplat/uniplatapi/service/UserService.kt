@@ -73,7 +73,6 @@ class UserService(
         return userRepository.save(user)
     }
 
-    @Transactional
     suspend fun create(request: CreateUserRequest, url: String): User {
         with(request) {
             val user = User(
@@ -92,9 +91,7 @@ class UserService(
 
             val savedUser = userRepository.saveUnique(user) { throw ConflictException("error.user.conflict", args = listOf(email)) }
 
-            applicationScope.launch {
-                emailVerificationCodeService.saveAndSendVerificationEmail(savedUser, url)
-            }
+            emailVerificationCodeService.saveAndSendVerificationEmail(savedUser.id!!, url)
 
             return savedUser
         }
