@@ -18,11 +18,11 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
@@ -49,7 +49,7 @@ class SearchService(
         val filterConditions = SearchType.values().associateWith { filters.contains(it) }
 
         if (filters.isNotEmpty()) {
-            runBlocking {
+            coroutineScope {
                 withContext(newSingleThreadContext("SearchContext")) {
                     if (filterConditions[SearchType.USER] == true) {
                         searchUsers(text, pageable, size)
@@ -105,7 +105,7 @@ class SearchService(
                 }
             }
         } else {
-            runBlocking {
+            coroutineScope {
                 withContext(newSingleThreadContext("SearchContext")) {
                     searchUsers(text, pageable, size)
                         .onEach { responseList.add(conversionService.convert(it)) }
