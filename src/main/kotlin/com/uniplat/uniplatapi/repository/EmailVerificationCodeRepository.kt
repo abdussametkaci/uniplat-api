@@ -7,4 +7,6 @@ import java.util.UUID
 interface EmailVerificationCodeRepository : CoroutineCrudRepository<EmailVerificationCode, UUID> {
 
     suspend fun findByCode(code: String): EmailVerificationCode?
+
+    suspend fun deleteByUserId(userId: UUID)
 }

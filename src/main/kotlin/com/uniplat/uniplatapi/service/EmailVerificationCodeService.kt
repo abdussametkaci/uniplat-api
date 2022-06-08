@@ -5,7 +5,10 @@ import com.uniplat.uniplatapi.domain.model.EmailVerificationCode
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.NotFoundException
+import com.uniplat.uniplatapi.extensions.logger
 import com.uniplat.uniplatapi.repository.EmailVerificationCodeRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.context.annotation.Lazy
 import org.springframework.mail.javamail.JavaMailSender
@@ -19,15 +22,18 @@ class EmailVerificationCodeService(
     private val emailVerificationCodeRepository: EmailVerificationCodeRepository,
     @Lazy private val userService: UserService,
     private val javaMailSender: JavaMailSender,
-    private val emailProperties: EmailProperties
+    private val emailProperties: EmailProperties,
+    private val applicationScope: CoroutineScope
 ) {
+
+    private val logger by logger()
 
     suspend fun verifyUser(code: String): String {
         emailVerificationCodeRepository.findByCode(code)
-            ?.also { emailVerificationCodeRepository.deleteById(it.id!!) }
             ?.let { emailVerificationCode ->
                 userService.getById(emailVerificationCode.userId)
                     .also { validate(it.id!!, emailVerificationCode.userId) }
+                    .also { emailVerificationCodeRepository.deleteByUserId(it.id!!) }
                     .apply { enabled = true }
                     .let { userService.save(it) }
             }
@@ -36,8 +42,10 @@ class EmailVerificationCodeService(
         return "Verified Account"
     }
 
-    suspend fun saveAndSendVerificationEmail(user: User, url: String) {
-        sendVerificationEmail(user, url, save(user.id!!).code)
+    suspend fun saveAndSendVerificationEmail(userId: UUID, url: String) {
+        val user = userService.getById(userId)
+        if (user.enabled) throw BadRequestException("error.email-verification-code.enabled-invalid")
+        else applicationScope.launch { sendVerificationEmail(user, url, save(userId).code) }
     }
 
     private suspend fun sendVerificationEmail(user: User, url: String, code: String) {
@@ -61,17 +69,22 @@ class EmailVerificationCodeService(
         helper.setSubject(subject)
 
         content = content.replace("[[name]]", "${user.name} ${user.surname}")
-        val verifyURL = "$url/verify?code=$code"
+        val verifyURL = "$url/email/verify?code=$code"
 
         content = content.replace("[[URL]]", verifyURL)
 
         helper.setText(content, true)
 
-        javaMailSender.send(message)
+        try {
+            javaMailSender.send(message)
+        } catch (e: Exception) {
+            emailVerificationCodeRepository.deleteByUserId(user.id!!)
+            logger.error("Email failed with $toAddress")
+        }
     }
 
     private suspend fun save(userId: UUID): EmailVerificationCode {
-        return emailVerificationCodeRepository.save(EmailVerificationCode(userId = userId, code = RandomStringUtils.randomAlphabetic(64)))
+        return emailVerificationCodeRepository.save(EmailVerificationCode(userId = userId, code = RandomStringUtils.randomAlphabetic(128)))
     }
 
     private suspend fun validate(userId: UUID, userIdOfVerificationCode: UUID) {
