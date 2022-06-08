@@ -11,6 +11,7 @@ import com.uniplat.uniplatapi.extensions.withUserId
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserService
+import com.uniplat.uniplatapi.utils.getURL
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -74,10 +75,5 @@ class UserController(
     @DeleteMapping("/{id}")
     suspend fun delete(@PathVariable id: UUID) {
         userService.delete(id)
-    }
-
-    private suspend fun getURL(serverHttpRequest: ServerHttpRequest): String {
-        val uri = serverHttpRequest.uri
-        return """${uri.scheme}://${uri.host}:${uri.port}"""
     }
 }
