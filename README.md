@@ -50,8 +50,13 @@ this with checksum control.
 
 ![](./screenshot/login-succeeded.png)
 
+## Database
+![](./screenshot/database.png)
+
 ## Full-Text Search
 The texts in all entered records are stored in a column called full_text, in which indexes the words are in the text.
+
+![](./screenshot/full-text-search.png)
 
 Tables with full text search applied:
 1) user -> name, surname, description
