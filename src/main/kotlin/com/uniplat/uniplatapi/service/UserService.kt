@@ -7,13 +7,13 @@ import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.domain.model.UserDTO
-import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UserDTORepository
 import com.uniplat.uniplatapi.repository.UserRepository
+import com.uniplat.uniplatapi.validation.UserValidator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -34,6 +34,7 @@ class UserService(
     private val fileService: FileService,
     private val activityParticipantService: ActivityParticipantService,
     private val emailVerificationCodeService: EmailVerificationCodeService,
+    private val userValidator: UserValidator,
     private val applicationScope: CoroutineScope
 ) {
 
@@ -136,7 +137,7 @@ class UserService(
 
     suspend fun updatePassword(id: UUID, request: UpdateUserPasswordRequest): User {
         return getById(id)
-            .also { validate(it, request) }
+            .also { userValidator.validate(it, request) }
             .apply {
                 with(request) {
                     this@apply.password = newPassword
@@ -161,13 +162,6 @@ class UserService(
                 launch { postCommentService.deleteAllByUserId(id) }
                 launch { activityParticipantService.deleteAllByUserId(id) }
             }
-        }
-    }
-
-    private suspend fun validate(user: User, request: UpdateUserPasswordRequest) {
-        with(request) {
-            if (currentPassword == newPassword) throw BadRequestException("error.user.comparing-password-invalid")
-            if (user.password != currentPassword) throw BadRequestException("error.user.update-password-invalid")
         }
     }
 }

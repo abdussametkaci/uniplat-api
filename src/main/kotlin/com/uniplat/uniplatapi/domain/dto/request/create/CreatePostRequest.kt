@@ -2,6 +2,8 @@ package com.uniplat.uniplatapi.domain.dto.request.create
 
 import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
+import com.uniplat.uniplatapi.validation.constraints.Latitude
+import com.uniplat.uniplatapi.validation.constraints.Longitude
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -26,6 +28,9 @@ data class CreatePostRequest(
     @get:Size(min = 1, max = 255, message = "error.post.activity-location-description-invalid")
     val activityLocationDescription: String?,
 
+    @get:Latitude(message = "error.validation.constraints.Latitude.message")
     val latitude: BigDecimal?,
+
+    @get:Longitude(message = "error.validation.constraints.Longitude.message")
     val longitude: BigDecimal?
 )

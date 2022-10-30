@@ -3,16 +3,15 @@ package com.uniplat.uniplatapi.service
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUniversityRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUniversityRequest
 import com.uniplat.uniplatapi.domain.enums.OwnerType
-import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.University
 import com.uniplat.uniplatapi.domain.model.UniversityDTO
-import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.exception.NotFoundException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.UniversityDTORepository
 import com.uniplat.uniplatapi.repository.UniversityRepository
+import com.uniplat.uniplatapi.validation.UniversityValidator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,10 +25,10 @@ import java.util.UUID
 class UniversityService(
     private val universityRepository: UniversityRepository,
     private val universityDTORepository: UniversityDTORepository,
-    private val userService: UserService,
     private val postService: PostService,
     private val fileService: FileService,
     private val userFollowService: UserFollowService,
+    private val universityValidator: UniversityValidator,
     private val applicationScope: CoroutineScope
 ) {
 
@@ -67,7 +66,7 @@ class UniversityService(
 
     suspend fun create(request: CreateUniversityRequest): University {
         with(request) {
-            validateAdmin(adminId)
+            universityValidator.validate(adminId)
 
             val university = University(
                 name = name,
@@ -81,7 +80,7 @@ class UniversityService(
     }
 
     suspend fun update(id: UUID, request: UpdateUniversityRequest, userId: UUID): UniversityDTO {
-        validateAdmin(request.adminId)
+        universityValidator.validate(request.adminId)
 
         return getById(id)
             .apply {
@@ -98,7 +97,7 @@ class UniversityService(
     }
 
     suspend fun update(id: UUID, request: UpdateUniversityRequest): University {
-        validateAdmin(request.adminId)
+        universityValidator.validate(request.adminId)
 
         return getById(id)
             .apply {
@@ -124,13 +123,6 @@ class UniversityService(
                 launch { university.profileImgId?.let { profileImgId -> fileService.delete(profileImgId) } }
                 launch { userFollowService.deleteAllByFollowIdAndFollowType(id, OwnerType.USER) }
             }
-        }
-    }
-
-    private suspend fun validateAdmin(id: UUID) {
-        val user = userService.getById(id)
-        if (user.type != UserType.TEACHER) {
-            throw BadRequestException("error.university.type-invalid", args = listOf(id))
         }
     }
 }

@@ -1,23 +1,20 @@
 package com.uniplat.uniplatapi.service
 
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateActivityParticipantRequest
-import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.domain.model.ActivityParticipant
-import com.uniplat.uniplatapi.exception.BadRequestException
 import com.uniplat.uniplatapi.exception.ConflictException
 import com.uniplat.uniplatapi.extensions.saveUnique
 import com.uniplat.uniplatapi.model.PaginatedModel
 import com.uniplat.uniplatapi.repository.ActivityParticipantRepository
-import org.springframework.context.annotation.Lazy
+import com.uniplat.uniplatapi.validation.ActivityParticipantValidator
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.Instant
 import java.util.UUID
 
 @Service
 class ActivityParticipantService(
     private val activityParticipantRepository: ActivityParticipantRepository,
-    @Lazy private val postService: PostService
+    private val activityParticipantValidator: ActivityParticipantValidator
 ) {
 
     suspend fun getAll(userId: UUID?, postId: UUID?, pageable: Pageable): PaginatedModel<ActivityParticipant> {
@@ -34,7 +31,7 @@ class ActivityParticipantService(
 
     suspend fun create(request: CreateActivityParticipantRequest): ActivityParticipant {
         with(request) {
-            validate(postId)
+            activityParticipantValidator.validate(postId)
 
             val userClub = ActivityParticipant(
                 userId = userId,
@@ -60,14 +57,5 @@ class ActivityParticipantService(
 
     suspend fun deleteAllByPostId(postId: UUID) {
         activityParticipantRepository.deleteAllByPostId(postId)
-    }
-
-    private suspend fun validate(postId: UUID) {
-        val post = postService.getById(postId)
-        if (post.postType != PostType.ACTIVITY) {
-            throw BadRequestException("error.activity-participant.invalid")
-        } else {
-            if (post.activityStartAt!!.isBefore(Instant.now())) throw BadRequestException("error.activity-participant.passed-invalid")
-        }
     }
 }
