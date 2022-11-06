@@ -10,7 +10,7 @@ import java.util.UUID
 
 interface UserRepository : CoroutineCrudRepository<User, UUID> {
 
-    suspend fun findByEmailAndPassword(email: String, password: String): User?
+    suspend fun findByEmail(email: String): User?
 
     fun findAllBy(pageable: Pageable): Flow<User>
 
