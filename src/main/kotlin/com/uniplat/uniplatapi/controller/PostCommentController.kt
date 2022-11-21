@@ -4,6 +4,7 @@ import com.uniplat.uniplatapi.domain.dto.request.create.CreatePostCommentRequest
 import com.uniplat.uniplatapi.domain.dto.response.PostCommentResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.PostCommentService
@@ -39,9 +40,9 @@ class PostCommentController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreatePostCommentRequest): PostCommentResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(postCommentService.create(request))
+    suspend fun create(@RequestBody request: CreatePostCommentRequest): PostCommentResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(postCommentService.create(request, it.id!!))
         }
     }
 

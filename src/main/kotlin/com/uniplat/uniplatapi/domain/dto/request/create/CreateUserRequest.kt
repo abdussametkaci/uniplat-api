@@ -5,7 +5,6 @@ import java.time.Instant
 import java.util.UUID
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
-import kotlin.math.min
 
 data class CreateUserRequest(
     @get:Size(min = 1, max = 255, message = "error.user.name-invalid")

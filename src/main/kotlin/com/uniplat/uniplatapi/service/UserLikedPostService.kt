@@ -30,7 +30,7 @@ class UserLikedPostService(private val userLikedPostRepository: UserLikedPostRep
         return userLikedPostRepository.findById(id) ?: throw NotFoundException("error.user-liked-post.not-found", args = listOf(id))
     }
 
-    suspend fun create(request: CreateUserLikedPostRequest) {
+    suspend fun create(request: CreateUserLikedPostRequest, userId: UUID) {
         with(request) {
             val userLikedPost = UserLikedPost(
                 userId = userId,

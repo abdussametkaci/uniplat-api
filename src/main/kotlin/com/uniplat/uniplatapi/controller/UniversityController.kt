@@ -6,14 +6,15 @@ import com.uniplat.uniplatapi.domain.dto.response.UniversityDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.UniversityResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
-import com.uniplat.uniplatapi.extensions.withUserId
-import com.uniplat.uniplatapi.extensions.withUserIdOrNull
+import com.uniplat.uniplatapi.extensions.withAuthentication
+import com.uniplat.uniplatapi.extensions.withAuthenticationOrNull
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UniversityService
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -38,36 +39,33 @@ class UniversityController(
     suspend fun getAll(
         @RequestParam adminId: UUID?,
         @PageableDefault pageable: Pageable
-    ): PaginatedResponse<UniversityDTOResponse> {
-        return withUserIdOrNull { userId ->
-            universityService.getAll(userId, adminId, pageable).convertWith(conversionService)
-        }
+    ): PaginatedResponse<UniversityDTOResponse> = withAuthenticationOrNull {
+        universityService.getAll(it?.id!!, adminId, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): UniversityDTOResponse {
-        return withUserId { userId ->
-            conversionService.convert(universityService.getById(id, userId))
-        }
+    suspend fun getById(@PathVariable id: UUID): UniversityDTOResponse = withAuthentication {
+        conversionService.convert(universityService.getById(id, it.id!!))
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUniversityRequest): UniversityResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(universityService.create(request))
+    @PreAuthorize("hasRole('TEACHER')")
+    suspend fun create(@RequestBody request: CreateUniversityRequest): UniversityResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(universityService.create(request, it.id!!))
         }
     }
 
     @PutMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUniversityRequest): UniversityDTOResponse {
-        return withUserId { userId ->
-            validator.withValidateSuspend(request) {
-                conversionService.convert(universityService.update(id, request, userId))
-            }
+    @PreAuthorize("hasRole('TEACHER')")
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUniversityRequest): UniversityDTOResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(universityService.update(id, request, it.id!!))
         }
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     suspend fun delete(@PathVariable id: UUID) {
         universityService.delete(id)
     }

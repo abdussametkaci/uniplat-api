@@ -4,6 +4,7 @@ import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserLikedPostReque
 import com.uniplat.uniplatapi.domain.dto.response.UserLikedPostResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserLikedPostService
 import org.springframework.core.convert.ConversionService
@@ -41,8 +42,8 @@ class UserLikedPostController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUserLikedPostRequest) {
-        userLikedPostService.create(request)
+    suspend fun create(@RequestBody request: CreateUserLikedPostRequest) = withAuthentication {
+        userLikedPostService.create(request, it.id!!)
     }
 
     @DeleteMapping("/{id}")

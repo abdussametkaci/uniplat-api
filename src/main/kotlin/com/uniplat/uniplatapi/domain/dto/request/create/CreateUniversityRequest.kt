@@ -10,6 +10,5 @@ data class CreateUniversityRequest(
     @get:Size(min = 1, max = 255, message = "error.university.description-invalid")
     val description: String?,
 
-    val profileImgId: UUID?,
-    val adminId: UUID
+    val profileImgId: UUID?
 )

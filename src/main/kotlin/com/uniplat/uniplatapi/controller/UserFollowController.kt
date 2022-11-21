@@ -5,6 +5,7 @@ import com.uniplat.uniplatapi.domain.dto.response.UserFollowResponse
 import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserFollowService
 import org.springframework.core.convert.ConversionService
@@ -38,8 +39,8 @@ class UserFollowController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateUserFollowRequest): UserFollowResponse {
-        return conversionService.convert(userFollowService.create(request))
+    suspend fun create(@RequestBody request: CreateUserFollowRequest): UserFollowResponse = withAuthentication {
+        conversionService.convert(userFollowService.create(request, it.id!!))
     }
 
     @DeleteMapping("/{id}")

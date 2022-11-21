@@ -1,4 +1,4 @@
-package com.uniplat.uniplatapi.domain.mapper
+package com.uniplat.uniplatapi.domain.converter
 
 import com.uniplat.uniplatapi.domain.dto.response.SearchResponse
 import com.uniplat.uniplatapi.domain.enums.SearchType
@@ -11,7 +11,7 @@ import org.mapstruct.Mappings
 import org.springframework.core.convert.converter.Converter
 
 @Mapper
-interface UserToSearchResponseMapper : Converter<User, SearchResponse> {
+interface UserToSearchResponseConverter : Converter<User, SearchResponse> {
 
     @Mappings(
         Mapping(target = "name", ignore = true),

@@ -8,7 +8,7 @@ import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
-import com.uniplat.uniplatapi.extensions.withUserId
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.PostService
@@ -41,26 +41,20 @@ class PostController(
         @RequestParam ownerType: OwnerType?,
         @RequestParam postType: PostType?,
         @PageableDefault pageable: Pageable
-    ): PaginatedResponse<PostDTOResponse> {
-        return withUserId { userId ->
-            postService.getAll(userId, ownerId, ownerType, postType, pageable).convertWith(conversionService)
-        }
+    ): PaginatedResponse<PostDTOResponse> = withAuthentication {
+        postService.getAll(it.id!!, ownerId, ownerType, postType, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/flow")
     suspend fun postFlow(
         @PageableDefault pageable: Pageable
-    ): PaginatedResponse<PostDTOResponse> {
-        return withUserId { userId ->
-            postService.postFlowByUserId(userId, pageable).convertWith(conversionService)
-        }
+    ): PaginatedResponse<PostDTOResponse> = withAuthentication {
+        postService.postFlowByUserId(it.id!!, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): PostDTOResponse {
-        return withUserId { userId ->
-            conversionService.convert(postService.getById(id, userId))
-        }
+    suspend fun getById(@PathVariable id: UUID): PostDTOResponse = withAuthentication {
+        conversionService.convert(postService.getById(id, it.id!!))
     }
 
     @PostMapping

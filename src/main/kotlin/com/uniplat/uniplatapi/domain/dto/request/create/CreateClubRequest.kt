@@ -12,6 +12,5 @@ data class CreateClubRequest(
     @get:Size(min = 1, max = 255, message = "error.club.description-invalid")
     val description: String?,
 
-    val profileImgId: UUID?,
-    val adminId: UUID
+    val profileImgId: UUID?
 )

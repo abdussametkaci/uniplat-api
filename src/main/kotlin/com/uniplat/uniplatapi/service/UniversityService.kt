@@ -64,15 +64,13 @@ class UniversityService(
         return universityRepository.findById(id) ?: throw NotFoundException("error.university.not-found", args = listOf(id))
     }
 
-    suspend fun create(request: CreateUniversityRequest): University {
+    suspend fun create(request: CreateUniversityRequest, userId: UUID): University {
         with(request) {
-            universityValidator.validate(adminId)
-
             val university = University(
                 name = name,
                 description = description,
                 profileImgId = profileImgId,
-                adminId = adminId
+                adminId = userId
             )
 
             return universityRepository.saveUnique(university) { throw ConflictException("error.university.conflict", args = listOf(name)) }

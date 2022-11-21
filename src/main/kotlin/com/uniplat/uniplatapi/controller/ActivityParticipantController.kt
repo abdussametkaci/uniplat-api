@@ -4,6 +4,7 @@ import com.uniplat.uniplatapi.domain.dto.request.create.CreateActivityParticipan
 import com.uniplat.uniplatapi.domain.dto.response.ActivityParticipantResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.ActivityParticipantService
 import org.springframework.core.convert.ConversionService
@@ -36,8 +37,8 @@ class ActivityParticipantController(
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateActivityParticipantRequest): ActivityParticipantResponse {
-        return conversionService.convert(activityParticipantService.create(request))
+    suspend fun create(@RequestBody request: CreateActivityParticipantRequest): ActivityParticipantResponse = withAuthentication {
+        conversionService.convert(activityParticipantService.create(request, it.id!!))
     }
 
     @DeleteMapping("/{id}")

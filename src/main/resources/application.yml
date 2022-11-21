@@ -41,3 +41,7 @@ api:
     connectionTimeout: PT5S
     readTimeout: PT30S
     memorySizeByMB: 5
+
+authentication:
+  tokenExpirationTimeSeconds: ${TOKEN_EXPIRATION_TIME_SECONDS:9000}
+  tokenIssuerId: UniPlat-API

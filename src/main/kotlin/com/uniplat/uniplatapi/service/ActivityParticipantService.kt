@@ -29,7 +29,7 @@ class ActivityParticipantService(
         )
     }
 
-    suspend fun create(request: CreateActivityParticipantRequest): ActivityParticipant {
+    suspend fun create(request: CreateActivityParticipantRequest, userId: UUID): ActivityParticipant {
         with(request) {
             activityParticipantValidator.validate(postId)
 

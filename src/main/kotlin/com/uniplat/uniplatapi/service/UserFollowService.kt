@@ -26,7 +26,7 @@ class UserFollowService(private val userFollowRepository: UserFollowRepository) 
         )
     }
 
-    suspend fun create(request: CreateUserFollowRequest): UserFollow {
+    suspend fun create(request: CreateUserFollowRequest, userId: UUID): UserFollow {
         with(request) {
             val userClub = UserFollow(
                 userId = userId,

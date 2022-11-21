@@ -6,7 +6,7 @@ import com.uniplat.uniplatapi.domain.dto.response.ClubDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.ClubResponse
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
-import com.uniplat.uniplatapi.extensions.withUserId
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.ClubService
@@ -38,32 +38,26 @@ class ClubController(
         @RequestParam universityId: UUID?,
         @RequestParam adminId: UUID?,
         @PageableDefault pageable: Pageable
-    ): PaginatedResponse<ClubDTOResponse> {
-        return withUserId { userId ->
-            clubService.getAll(userId, universityId, adminId, pageable).convertWith(conversionService)
-        }
+    ): PaginatedResponse<ClubDTOResponse> = withAuthentication {
+        clubService.getAll(it.id!!, universityId, adminId, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): ClubDTOResponse {
-        return withUserId { userId ->
-            conversionService.convert(clubService.getById(id, userId))
-        }
+    suspend fun getById(@PathVariable id: UUID): ClubDTOResponse = withAuthentication {
+        conversionService.convert(clubService.getById(id, it.id!!))
     }
 
     @PostMapping
-    suspend fun create(@RequestBody request: CreateClubRequest): ClubResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(clubService.create(request))
+    suspend fun create(@RequestBody request: CreateClubRequest): ClubResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(clubService.create(request, it.id!!))
         }
     }
 
     @PutMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateClubRequest): ClubDTOResponse {
-        return withUserId { userId ->
-            validator.withValidateSuspend(request) {
-                conversionService.convert(clubService.update(id, request, userId))
-            }
+    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateClubRequest): ClubDTOResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(clubService.update(id, request, it.id!!))
         }
     }
 

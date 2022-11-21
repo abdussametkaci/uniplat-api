@@ -59,7 +59,7 @@ class UniPlatErrorWebExceptionHandler(
             else -> {
                 status = HttpStatus.INTERNAL_SERVER_ERROR
                 errorResponse = ErrorResponse(
-                    "INTERNAL_SERVER_RESPONSE",
+                    "INTERNAL_SERVER_ERROR",
                     ex.message ?: "",
                     emptyList()
                 )

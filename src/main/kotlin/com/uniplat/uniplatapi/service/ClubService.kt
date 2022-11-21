@@ -62,14 +62,14 @@ class ClubService(
         return clubRepository.findById(id) ?: throw NotFoundException("error.club.not-found", args = listOf(id))
     }
 
-    suspend fun create(request: CreateClubRequest): Club {
+    suspend fun create(request: CreateClubRequest, userId: UUID): Club {
         with(request) {
             val club = Club(
                 name = name,
                 universityId = universityId,
                 description = description,
                 profileImgId = profileImgId,
-                adminId = adminId
+                adminId = userId
             )
 
             return clubRepository.saveUnique(club) { throw ConflictException("error.club.conflict", args = listOf(name, universityId)) }

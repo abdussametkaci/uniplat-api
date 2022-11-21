@@ -5,9 +5,10 @@ import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserPasswordReques
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
+import com.uniplat.uniplatapi.domain.model.User
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
-import com.uniplat.uniplatapi.extensions.withUserId
+import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserService
@@ -16,6 +17,7 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -35,45 +37,45 @@ class UserController(
     private val validator: Validator
 ) {
 
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER')")
+    suspend fun getMe(): User = withAuthentication {
+        userService.getById(it.id!!)
+    }
+
     @GetMapping
-    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserDTOResponse> {
-        return withUserId { userId ->
-            userService.getAll(userId, pageable).convertWith(conversionService)
-        }
+    suspend fun getAll(@PageableDefault pageable: Pageable): PaginatedResponse<UserDTOResponse> = withAuthentication {
+        userService.getAll(it.id!!, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
-    suspend fun getById(@PathVariable id: UUID): UserDTOResponse {
-        return withUserId { userId ->
-            conversionService.convert(userService.getById(id, userId))
-        }
+    suspend fun getById(@PathVariable id: UUID): UserDTOResponse = withAuthentication {
+        conversionService.convert(userService.getById(id, it.id!!))
     }
 
-    @PostMapping
+    @PostMapping("/register")
     suspend fun create(@RequestBody request: CreateUserRequest, serverHttpRequest: ServerHttpRequest): UserResponse {
         return validator.withValidateSuspend(request) {
             conversionService.convert(userService.create(request, getURL(serverHttpRequest)))
         }
     }
 
-    @PutMapping("/{id}")
-    suspend fun update(@PathVariable id: UUID, @RequestBody request: UpdateUserRequest): UserDTOResponse {
-        return withUserId { userId ->
-            validator.withValidateSuspend(request) {
-                conversionService.convert(userService.update(id, request, userId))
-            }
+    @PutMapping
+    suspend fun update(@RequestBody request: UpdateUserRequest): UserDTOResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(userService.update(it.id!!, request))
         }
     }
 
-    @PutMapping("/{id}/password")
-    suspend fun updatePassword(@PathVariable id: UUID, @RequestBody request: UpdateUserPasswordRequest): UserResponse {
-        return validator.withValidateSuspend(request) {
-            conversionService.convert(userService.updatePassword(id, request))
+    @PutMapping("/password")
+    suspend fun updatePassword(@RequestBody request: UpdateUserPasswordRequest): UserResponse = withAuthentication {
+        validator.withValidateSuspend(request) {
+            conversionService.convert(userService.updatePassword(it.id!!, request))
         }
     }
 
-    @DeleteMapping("/{id}")
-    suspend fun delete(@PathVariable id: UUID) {
-        userService.delete(id)
+    @DeleteMapping
+    suspend fun delete() = withAuthentication {
+        userService.delete(it.id!!)
     }
 }

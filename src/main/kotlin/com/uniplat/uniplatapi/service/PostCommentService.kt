@@ -23,7 +23,7 @@ class PostCommentService(private val postCommentRepository: PostCommentRepositor
         )
     }
 
-    suspend fun create(request: CreatePostCommentRequest): PostComment {
+    suspend fun create(request: CreatePostCommentRequest, userId: UUID): PostComment {
         with(request) {
             val userClub = PostComment(
                 userId = userId,

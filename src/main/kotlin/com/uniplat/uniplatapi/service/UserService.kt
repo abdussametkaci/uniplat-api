@@ -18,9 +18,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.reactor.mono
 import org.springframework.data.domain.Pageable
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.Mono
 import java.util.UUID
 
 @Service
@@ -35,8 +40,9 @@ class UserService(
     private val activityParticipantService: ActivityParticipantService,
     private val emailVerificationCodeService: EmailVerificationCodeService,
     private val userValidator: UserValidator,
+    private val passwordEncoder: PasswordEncoder,
     private val applicationScope: CoroutineScope
-) {
+) : ReactiveUserDetailsService {
 
     suspend fun getAll(pageable: Pageable): PaginatedModel<User> {
         val count = userRepository.count()
@@ -82,7 +88,7 @@ class UserService(
                 gender = gender,
                 birthDate = birthDate,
                 email = email,
-                password = password,
+                password = passwordEncoder.encode(password),
                 universityId = universityId,
                 type = if ("@stu" in email) UserType.STUDENT else UserType.TEACHER,
                 description = description,
@@ -98,7 +104,7 @@ class UserService(
         }
     }
 
-    suspend fun update(id: UUID, request: UpdateUserRequest, userId: UUID): UserDTO {
+    suspend fun update(id: UUID, request: UpdateUserRequest): UserDTO {
         return getById(id)
             .apply {
                 with(request) {
@@ -114,9 +120,10 @@ class UserService(
                 }
             }
             .let { userRepository.save(it) }
-            .let { getById(id, userId) }
+            .let { getById(id, id) }
     }
 
+    /*
     suspend fun update(id: UUID, request: UpdateUserRequest): User {
         return getById(id)
             .apply {
@@ -134,13 +141,14 @@ class UserService(
             }
             .let { userRepository.save(it) }
     }
+     */
 
     suspend fun updatePassword(id: UUID, request: UpdateUserPasswordRequest): User {
         return getById(id)
             .also { userValidator.validate(it, request) }
             .apply {
                 with(request) {
-                    this@apply.password = newPassword
+                    this@apply.password = passwordEncoder.encode(newPassword)
                     this@apply.version = version
                 }
             }
@@ -163,5 +171,11 @@ class UserService(
                 launch { activityParticipantService.deleteAllByUserId(id) }
             }
         }
+    }
+
+    override fun findByUsername(username: String): Mono<UserDetails> = mono {
+        userRepository.findByEmail(username)?.also {
+            if (!it.enabled) throw NotFoundException("error.user.not-found-by-email", args = listOf(username))
+        } ?: throw NotFoundException("error.user.not-found-by-email", args = listOf(username))
     }
 }
