@@ -40,7 +40,7 @@ class UniversityController(
         @RequestParam adminId: UUID?,
         @PageableDefault pageable: Pageable
     ): PaginatedResponse<UniversityDTOResponse> = withAuthenticationOrNull {
-        universityService.getAll(it?.id!!, adminId, pageable).convertWith(conversionService)
+        universityService.getAll(it?.id, adminId, pageable).convertWith(conversionService)
     }
 
     @GetMapping("/{id}")
