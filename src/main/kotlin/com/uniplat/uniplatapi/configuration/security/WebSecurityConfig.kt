@@ -25,7 +25,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer
 @Configuration
 @EnableWebFlux
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
+@EnableReactiveMethodSecurity(useAuthorizationManager = false)
 class WebSecurityConfig : WebFluxConfigurer {
 
     @Bean
