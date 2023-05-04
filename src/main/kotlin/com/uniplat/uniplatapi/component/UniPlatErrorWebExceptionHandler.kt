@@ -33,7 +33,7 @@ class UniPlatErrorWebExceptionHandler(
 
         when {
             ex is BaseResponseStatusException -> {
-                status = ex.status
+                status = ex.statusCode as HttpStatus
                 errorResponse = ErrorResponse(
                     ex.code,
                     getLocalizedMessage(ex),
@@ -41,9 +41,9 @@ class UniPlatErrorWebExceptionHandler(
                 )
             }
             ex is ResponseStatusException -> {
-                status = ex.status
+                status = ex.statusCode as HttpStatus
                 errorResponse = ErrorResponse(
-                    ex.status.name,
+                    (ex.statusCode as HttpStatus).name,
                     ex.reason ?: ex.message,
                     emptyList()
                 )

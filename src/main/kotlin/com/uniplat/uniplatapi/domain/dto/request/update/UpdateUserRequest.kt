@@ -1,9 +1,9 @@
 package com.uniplat.uniplatapi.domain.dto.request.update
 
 import com.uniplat.uniplatapi.domain.enums.Gender
+import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.util.UUID
-import javax.validation.constraints.Size
 
 data class UpdateUserRequest(
     @get:Size(min = 1, max = 255, message = "error.user.name-invalid")

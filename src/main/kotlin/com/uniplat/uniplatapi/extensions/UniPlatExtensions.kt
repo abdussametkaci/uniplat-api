@@ -1,6 +1,5 @@
 package com.uniplat.uniplatapi.extensions
 
-import com.uniplat.uniplatapi.configuration.holder.ReactiveRequestContextHolder
 import com.uniplat.uniplatapi.configuration.security.auth.JwtAuthenticationToken
 import com.uniplat.uniplatapi.domain.enums.UserType
 import com.uniplat.uniplatapi.domain.model.User
@@ -11,9 +10,9 @@ import com.uniplat.uniplatapi.model.PaginatedResponse
 import io.jsonwebtoken.Claims
 import io.netty.channel.ChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
+import jakarta.validation.Validator
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.LoggerFactory
@@ -21,9 +20,8 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.r2dbc.convert.EnumWriteSupport
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
@@ -37,7 +35,6 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import javax.validation.Validator
 
 inline fun <reified T : Enum<T>?> enumConverterOf(): EnumWriteSupport<T> {
     return object : EnumWriteSupport<T>() {}
@@ -58,7 +55,7 @@ inline fun WebClient.Builder.configureTimeouts(
     )
 }
 
-fun WebClient.ResponseSpec.exceptionHandler(): WebClient.ResponseSpec = onStatus(HttpStatus::isError) {
+fun WebClient.ResponseSpec.exceptionHandler(): WebClient.ResponseSpec = onStatus(HttpStatusCode::isError) {
     throw UniplatException("error.api.internal")
 }
 
@@ -101,27 +98,6 @@ private fun Validator.validateObject(any: Any) {
     }
 
     if (validate(any).isNotEmpty()) throw BadRequestException("error.field.invalid", errors = errorList)
-}
-
-suspend fun <T> withUserId(block: suspend (UUID) -> T): T {
-    val userId =
-        ReactiveRequestContextHolder.request
-            .mapNotNull { request: ServerHttpRequest ->
-                request.headers.getFirst("userId")
-            }.awaitFirstOrNull()
-
-    return if (userId != null) block(UUID.fromString(userId))
-    else throw BadRequestException("error.*.userId-empty")
-}
-
-suspend fun <T> withUserIdOrNull(block: suspend (UUID?) -> T): T {
-    val userId =
-        ReactiveRequestContextHolder.request
-            .mapNotNull { request: ServerHttpRequest ->
-                request.headers.getFirst("userId")
-            }.awaitFirstOrNull()
-
-    return block(userId?.let { UUID.fromString(userId) })
 }
 
 fun <T : Any> T.logger() = lazy { LoggerFactory.getLogger(javaClass) }

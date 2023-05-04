@@ -1,6 +1,6 @@
 package com.uniplat.uniplatapi.domain.dto.request.update
 
-import javax.validation.constraints.Size
+import jakarta.validation.constraints.Size
 
 data class UpdateUserPasswordRequest(
     @get:Size(min = 4, max = 255, message = "error.user.password-invalid")

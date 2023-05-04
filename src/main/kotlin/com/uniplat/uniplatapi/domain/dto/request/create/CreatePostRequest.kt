@@ -4,10 +4,10 @@ import com.uniplat.uniplatapi.domain.enums.OwnerType
 import com.uniplat.uniplatapi.domain.enums.PostType
 import com.uniplat.uniplatapi.validation.constraints.Latitude
 import com.uniplat.uniplatapi.validation.constraints.Longitude
+import jakarta.validation.constraints.Size
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
-import javax.validation.constraints.Size
 
 data class CreatePostRequest(
     val imgId: UUID?,

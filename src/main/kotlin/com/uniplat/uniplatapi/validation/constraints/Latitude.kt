@@ -1,8 +1,8 @@
 package com.uniplat.uniplatapi.validation.constraints
 
 import com.uniplat.uniplatapi.validation.constraintvalidator.LatitudeValidator
-import javax.validation.Constraint
-import javax.validation.Payload
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
 @MustBeDocumented

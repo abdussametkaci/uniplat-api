@@ -1,11 +1,11 @@
 package com.uniplat.uniplatapi.configuration
 
 import com.uniplat.uniplatapi.component.dsl.EntityProperties
+import jakarta.annotation.PostConstruct
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.data.relational.core.mapping.Table
-import javax.annotation.PostConstruct
 import kotlin.reflect.KClass
 
 @Configuration

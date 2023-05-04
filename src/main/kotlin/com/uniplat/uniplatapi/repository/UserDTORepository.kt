@@ -35,7 +35,7 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .bind("userId", userId)
             .bind("offset", offset)
             .bind("limit", limit)
-            .map(::mapUserDTO)
+            .map { row, _ -> mapUserDTO(row) }
             .all()
             .asFlow()
     }
@@ -59,7 +59,7 @@ class UserDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .sql(query)
             .bind("id", id)
             .bind("userId", userId)
-            .map(::mapUserDTO)
+            .map { row, _ -> mapUserDTO(row) }
             .awaitOneOrNull()
     }
 

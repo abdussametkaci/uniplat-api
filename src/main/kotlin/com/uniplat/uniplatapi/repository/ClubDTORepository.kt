@@ -35,7 +35,7 @@ class ClubDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .bind("adminId", adminId)
             .bind("offset", offset)
             .bind("limit", limit)
-            .map(::mapClubDTO)
+            .map { row, _ -> mapClubDTO(row) }
             .all()
             .asFlow()
     }
@@ -57,7 +57,7 @@ class ClubDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .sql(query)
             .bind("id", id)
             .bind("userId", userId)
-            .map(::mapClubDTO)
+            .map { row, _ -> mapClubDTO(row) }
             .awaitOneOrNull()
     }
 

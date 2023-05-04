@@ -13,13 +13,13 @@ class CorsConfiguration(private val corsProperties: CorsProperties) : WebFluxCon
         registry.addMapping("/**")
             .allowedOrigins(*corsProperties.allowedOrigins.toTypedArray())
             .allowedMethods(
-                HttpMethod.GET.name,
-                HttpMethod.POST.name,
-                HttpMethod.PUT.name,
-                HttpMethod.PATCH.name,
-                HttpMethod.HEAD.name,
-                HttpMethod.OPTIONS.name,
-                HttpMethod.DELETE.name
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.PATCH.name(),
+                HttpMethod.HEAD.name(),
+                HttpMethod.OPTIONS.name(),
+                HttpMethod.DELETE.name()
             )
             .allowedHeaders("*")
             .allowCredentials(true)

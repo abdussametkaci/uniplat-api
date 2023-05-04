@@ -40,7 +40,7 @@ class UniversityDTORepository(private val databaseTemplate: R2dbcEntityOperation
             .bind("adminId", adminId)
             .bind("offset", offset)
             .bind("limit", limit)
-            .map(::mapUniversityDTO)
+            .map { row, _ -> mapUniversityDTO(row) }
             .all()
             .asFlow()
     }
@@ -63,7 +63,7 @@ class UniversityDTORepository(private val databaseTemplate: R2dbcEntityOperation
             .sql(query)
             .bind("id", id)
             .bind("userId", userId)
-            .map(::mapUniversityDTO)
+            .map { row, _ -> mapUniversityDTO(row) }
             .awaitOneOrNull()
     }
 

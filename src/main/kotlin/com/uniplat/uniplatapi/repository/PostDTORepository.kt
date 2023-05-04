@@ -50,7 +50,7 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .bind("postType", postType)
             .bind("offset", offset)
             .bind("limit", limit)
-            .map(::mapPostDTO)
+            .map { row, _ -> mapPostDTO(row) }
             .all()
             .asFlow()
     }
@@ -82,7 +82,7 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .sql(query)
             .bind("id", id)
             .bind("userId", userId)
-            .map(::mapPostDTO)
+            .map { row, _ -> mapPostDTO(row) }
             .awaitOneOrNull()
     }
 
@@ -121,7 +121,7 @@ class PostDTORepository(private val databaseTemplate: R2dbcEntityOperations) {
             .bind("userId", userId)
             .bind("offset", offset)
             .bind("limit", limit)
-            .map(::mapPostDTO)
+            .map { row, _ -> mapPostDTO(row) }
             .all()
             .asFlow()
     }

@@ -2,9 +2,9 @@ package com.uniplat.uniplatapi.domain.dto.request.update
 
 import com.uniplat.uniplatapi.validation.constraints.Latitude
 import com.uniplat.uniplatapi.validation.constraints.Longitude
+import jakarta.validation.constraints.Size
 import java.math.BigDecimal
 import java.time.Instant
-import javax.validation.constraints.Size
 
 data class UpdatePostRequest(
     @get:Size(min = 1, max = 255, message = "error.post.description-invalid")

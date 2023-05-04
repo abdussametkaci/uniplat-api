@@ -13,14 +13,14 @@ class ReactiveFilteringRepository<T : Any>(private val r2dbcEntityTemplate: R2db
 
     override fun findAll(query: String, type: KClass<T>): Flow<T> {
         return r2dbcEntityTemplate.databaseClient.sql(query)
-            .map { row -> r2dbcEntityTemplate.converter.read(type.java, row) }
+            .map { row -> r2dbcEntityTemplate.converter.read(type.java, row as Row) }
             .all()
             .asFlow()
     }
 
     override suspend fun count(query: String): Long {
         return r2dbcEntityTemplate.databaseClient.sql(query)
-            .map(::mapCount)
+            .map { row, _ -> mapCount(row) }
             .awaitOne()
             .count
     }

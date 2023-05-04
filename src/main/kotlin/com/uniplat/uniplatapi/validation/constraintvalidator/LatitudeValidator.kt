@@ -1,9 +1,9 @@
 package com.uniplat.uniplatapi.validation.constraintvalidator
 
 import com.uniplat.uniplatapi.validation.constraints.Latitude
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import java.math.BigDecimal
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 class LatitudeValidator : ConstraintValidator<Latitude, BigDecimal> {
 

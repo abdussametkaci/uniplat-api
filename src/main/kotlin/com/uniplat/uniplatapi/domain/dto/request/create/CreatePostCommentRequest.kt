@@ -1,7 +1,7 @@
 package com.uniplat.uniplatapi.domain.dto.request.create
 
+import jakarta.validation.constraints.Size
 import java.util.UUID
-import javax.validation.constraints.Size
 
 data class CreatePostCommentRequest(
     val postId: UUID,

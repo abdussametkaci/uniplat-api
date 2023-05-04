@@ -5,11 +5,11 @@ import com.uniplat.uniplatapi.domain.dto.response.LoginResponse
 import com.uniplat.uniplatapi.extensions.withAuthentication
 import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.service.AuthenticationService
+import jakarta.validation.Validator
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Validator
 
 @RestController
 @RequestMapping("/auth")

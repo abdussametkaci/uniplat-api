@@ -1,7 +1,7 @@
 package com.uniplat.uniplatapi.domain.dto.request.update
 
+import jakarta.validation.constraints.Size
 import java.util.UUID
-import javax.validation.constraints.Size
 
 data class UpdateUniversityRequest(
     @get:Size(min = 1, max = 255, message = "error.university.name-invalid")
