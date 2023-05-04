@@ -15,7 +15,7 @@ import com.uniplat.uniplatapi.repository.PostRepository
 import com.uniplat.uniplatapi.repository.UniversityRepository
 import com.uniplat.uniplatapi.repository.UserRepository
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -38,7 +38,7 @@ class SearchService(
     private val conversionService: ConversionService
 ) {
 
-    @OptIn(ObsoleteCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun search(filters: List<SearchType>, text: String, pageable: Pageable): PaginatedResponse<SearchResponse> {
         validateUserFilter(filters)
         val size = if (filters.isNotEmpty()) pageable.pageSize / filters.size else pageable.pageSize / 4
