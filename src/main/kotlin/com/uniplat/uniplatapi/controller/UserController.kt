@@ -1,11 +1,14 @@
 package com.uniplat.uniplatapi.controller
 
+import com.uniplat.uniplatapi.component.dsl.findAll
+import com.uniplat.uniplatapi.configuration.EntityConfiguration
 import com.uniplat.uniplatapi.domain.dto.request.create.CreateUserRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserPasswordRequest
 import com.uniplat.uniplatapi.domain.dto.request.update.UpdateUserRequest
 import com.uniplat.uniplatapi.domain.dto.response.UserDTOResponse
 import com.uniplat.uniplatapi.domain.dto.response.UserResponse
 import com.uniplat.uniplatapi.domain.model.User
+import com.uniplat.uniplatapi.executor.UserDSLExecutor
 import com.uniplat.uniplatapi.extensions.convert
 import com.uniplat.uniplatapi.extensions.convertWith
 import com.uniplat.uniplatapi.extensions.withAuthentication
@@ -13,11 +16,13 @@ import com.uniplat.uniplatapi.extensions.withValidateSuspend
 import com.uniplat.uniplatapi.model.PaginatedResponse
 import com.uniplat.uniplatapi.service.UserService
 import com.uniplat.uniplatapi.utils.getURL
+import kotlinx.coroutines.flow.toList
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 import javax.validation.Validator
@@ -34,8 +40,22 @@ import javax.validation.Validator
 class UserController(
     private val userService: UserService,
     private val conversionService: ConversionService,
-    private val validator: Validator
+    private val validator: Validator,
+    private val entityConfiguration: EntityConfiguration,
+    private val userDSLExecutor: UserDSLExecutor
 ) {
+
+    @GetMapping("/all")
+    suspend fun test(@RequestParam parameters: MultiValueMap<String, String>): List<User> {
+        userDSLExecutor.setEntityPropertiesWithParameters(entityConfiguration.getEntityProperties(User::class), parameters)
+        val entities = userDSLExecutor.findAll().toList()
+        val count = userDSLExecutor.count()
+        println("parameters: $parameters")
+        println("entities: $entities")
+        println("count: $count")
+        println("query: ${userDSLExecutor.query()}")
+        return entities
+    }
 
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER')")
